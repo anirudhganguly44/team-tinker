@@ -1,1 +1,34 @@
 
+List the requirements for this feature. 
+•	Python 3.6.4
+•	Tensorflow-gpu 2.5.0 (pip install tensorflow-gpu==2.5.0)
+•	Tensorpack (pip install tensorpack)
+
+Dataset download:
+Download our datasets (binary format) and place them into *SELFIE/dataset/xxxxx*.
+(e.g., SELFIE/dataset/CIFAR-10)
+
+Algorithm parameters
+ -gpu_id: gpu number which you want to use (only support single gpu).
+ -data: dataset in {CIFAR-10, CIFAR-100, Tiny-ImageNet, ANIMAL-10N}.
+ -model_name: model in {VGG-19, DenseNet-10-12, DenseNet-25-12, DenseNet-40-12}.
+ -method_name: method in {Default, ActiveBias, Coteaching, SELFIE}.
+ -noise_type: synthetic noise type in {pair, symmetry, none}, none: do not inject synthetic noise.
+ -noise_rate: the rate which you want to corrupt (for CIFAR-10/100, Tiny-ImageNet) or the true noise rate of dataset (for ANIMAL-10N).
+ -log_dir: log directory to save the training/test error.
+Algorithm configuration
+
+Data augmentation and distortion are not applied, and training paramters are set to:
+
+Training epochs: 100
+Batch size: 128
+Learning rate: 0.1 (divided 5 at the approximately 50% and approximately 75% of the total number of epochs)
+Running commend
+
+python main.py gpu_id data model_name method_name noise_type noise_rate log_dir
+
+# e.g. 1., train DenseNet (L=25, k=12) on CIFAR-100 with pair noise of 40%.
+# python main.py 0 CIFAR-100 DenseNet-25-12 SELFIE pair 0.4 log/CIFAR-100/SELFIE
+
+# e.g. 2., train DenseNet (L=25, k=12) on ANIMAL-10N with real-world noise of 8%
+# python main.py 0 ANIMAL-10N DenseNet-25-12 SELFIE none 0.08 log/ANIMAL-10N/SELFIE
