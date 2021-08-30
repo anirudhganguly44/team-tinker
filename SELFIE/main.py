@@ -14,7 +14,7 @@ def main():
     print("This code trains Densnet(L={10,25,40}, k=12) using SELFIE in tensorflow-gpu environment.")
     print("\nDescription -----------------------------------------------------------")
     print("Please download datasets from our github before running command.")
-    print("For SELFIE, the hyperparameter was set to be ""uncertainty threshold = 0.05"" and  ""history length=15.")
+    print("For SELFIE, the hyperparameter was set to be ","uncertainty threshold = 0.05"," and  ","history length=15.")
     print("For Training, we follow the same configuration in our paper")
     print("For Training, training_epoch = 100, batch = 128, initial_learning rate = 0.1 (decayed 50% and 75% of total number of epochs), use momentum of 0.9, warm_up=25, restart=2, ...")
     print("You can easily change the value in main.py")
