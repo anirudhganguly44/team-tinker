@@ -156,3 +156,27 @@ class BatchPatcher(object):
                 if entire or sample.corrected:
                     noise_matrix[sample.true_label][sample.last_corrected_label] += 1
         return noise_matrix
+
+    def bulk_save_data(self, outputDir):
+        # code to save data
+
+        print("Starting saving images to local directory: "+outputDir)
+        print("*******************************************")
+        print("")
+
+        samples=[]
+        for sample in self.loaded_data:
+            if sample is not None:
+                samples.append(sample)
+
+        from SELFIE.writer.image_writer import image_writer
+        image_writer.save_files(outputDir,samples)
+
+        print("")
+        print("*******************************************")
+        
+
+
+
+    
+
