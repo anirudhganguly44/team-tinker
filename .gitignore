@@ -22,6 +22,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-FrontEnd/tinker-webapp/node_modules/
+FrontEnd/node_modules/
 SELFIE/output/.DS_Store
 SELFIE/output/
+.DS_Store
+.vscode/
+FrontEnd/client/node_modules/

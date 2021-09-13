@@ -14,29 +14,28 @@ class App extends Component {
   }
 
   render() {
-    // const imageList = [];
-    // this.state.data.map((imagePath) => imageList.push(imagePath.split("\\")));
+    const imageList = this.state.data;
     // console.log(imageList);
+    // console.log('Current directory: ' + process.cwd());
 
     return (
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Tinker Web App</h1>
         </header>
-        <p>
-          {this.state.data.map((filePath) => (
-            <div>
-            <img src={filePath} alt={filePath.split("\\")[(filePath.split("\\").length-2)]}/>
-            </div>
-          ))}
-        </p>
-
-        {/* <p>
-          {this.state.data.map((filePath) => (
-
-            <img src={filePath} />
-          ))}
-        </p> */}
+        <br />
+        <br />
+        {imageList.map((file) => (
+          <div>
+            <img src={file.sourcePath} />
+            <br />
+            Name = {file.fileName}
+            <br />
+            LABEL = {file.folderName}
+            <br />
+            <br />
+          </div>
+        ))}
       </div>
     );
   }
