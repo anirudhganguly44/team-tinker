@@ -174,31 +174,31 @@ def selfie(gpu_id, input_reader, model_type, total_epochs, batch_size, lr_bounda
                 # clean data set => simulated noisy data set
                 train_batch_patcher.set_noise(noise_rate, noise_type)
 
-                # ######################## main methodology for training #######################
+                ######################## main methodology for training #######################
 
-                # # exception handler
-                # if queue_size > warm_up:
-                #     sys.exit(-1)
-                #     print("warm-up parameter error!")
+                # exception handler
+                if queue_size > warm_up:
+                    sys.exit(-1)
+                    print("warm-up parameter error!")
 
-                # # start training
-                # train_batch_patcher.print_transition_matrix(train_batch_patcher.get_current_noise_matrix(entire=True), correction_log)
-                # for r in range(restart+1):
-                #     print("# run: ", (r+1))
-                #     sess.run(trainer.init_op)
-                #     # warm-up periods
-                #     training(sess, warm_up, batch_size, train_batch_patcher, test_batch_patcher, trainer, 0, method="warm-up", correcter=correcter, training_log=training_log)
-                #     # selfie
-                #     training(sess, total_epochs-warm_up, batch_size, train_batch_patcher, test_batch_patcher, trainer, warm_up, method=method, noise_rate=noise_rate, correcter=correcter, training_log=training_log, correction_log=correction_log)
-                #     # corrected confusion matrix
-                #     train_batch_patcher.print_transition_matrix(train_batch_patcher.get_current_noise_matrix(entire=False), correction_log)
-                #     # clean prediction history for next run
-                #     correcter.predictions_clear()
-                #     # recalculate noise rate of data based on refurbished samples
-                #     noise_rate = np.fmin(noise_rate, correcter.compute_new_noise_ratio())
-                #     print("new noise rate: ", noise_rate)
-                #     correction_log.append("new noise rate, " + str(noise_rate))
-                # ##############################################################################
+                # start training
+                train_batch_patcher.print_transition_matrix(train_batch_patcher.get_current_noise_matrix(entire=True), correction_log)
+                for r in range(restart+1):
+                    print("# run: ", (r+1))
+                    sess.run(trainer.init_op)
+                    # warm-up periods
+                    training(sess, warm_up, batch_size, train_batch_patcher, test_batch_patcher, trainer, 0, method="warm-up", correcter=correcter, training_log=training_log)
+                    # selfie
+                    training(sess, total_epochs-warm_up, batch_size, train_batch_patcher, test_batch_patcher, trainer, warm_up, method=method, noise_rate=noise_rate, correcter=correcter, training_log=training_log, correction_log=correction_log)
+                    # corrected confusion matrix
+                    train_batch_patcher.print_transition_matrix(train_batch_patcher.get_current_noise_matrix(entire=False), correction_log)
+                    # clean prediction history for next run
+                    correcter.predictions_clear()
+                    # recalculate noise rate of data based on refurbished samples
+                    noise_rate = np.fmin(noise_rate, correcter.compute_new_noise_ratio())
+                    print("new noise rate: ", noise_rate)
+                    correction_log.append("new noise rate, " + str(noise_rate))
+                ##############################################################################
 
                 coord.request_stop()
                 coord.join(threads)
