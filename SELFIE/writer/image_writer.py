@@ -23,7 +23,7 @@ class image_writer():
             if sample.image is None:
                 print("Image not present!")
             else:
-                filename = path+str(sample.true_label)+".png"
+                filename = path+"L-"+str(sample.label)+"_TL-"+str(sample.true_label)+".png" # sample.label
                 # pyplot.imshow(sample.image)
                 # pyplot.imsave(filename,sample.image)
                 #img = cv2.cvtColor(sample.image, cv2.COLOR_GRAY2BGR)
@@ -65,4 +65,3 @@ class image_writer():
                 #     e = str(sys.exc_info())
                 #     print("Error occurred while copying file.\n"+ e)
                 #     break
-                
