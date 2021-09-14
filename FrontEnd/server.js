@@ -20,9 +20,18 @@ app.get("/getImages", (req, res) => {
       if (fs.statSync(dirPath + "/" + file).isDirectory()) {
         arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
       } else {
-        dict["folderName"] = dirPath.split(/(.*)[\/\\]/)[2];
+        folder = dirPath.replace("./client/public","");
+        folderName = folder.split(/(.*)[\/\\]/)[2];
+        // console.log(folder)
+
+
+        dict["folderName"] = folderName;
         dict["fileName"] = file;
-        dict["sourcePath"] = path.join(dirPath, "/", file);
+        dict["src"] = path.join(folder, "/", file);
+        dict["thumbnail"] = path.join(folder, "/", file);
+        dict["thumbnailWidth"] = 320;
+        dict["thumbnailHeight"] = 320
+        // console.log(dict)
         arrayOfFiles.push(dict);
       }
     });
@@ -33,7 +42,7 @@ app.get("/getImages", (req, res) => {
   // console.log('Current directory: ' + process.cwd());
 
   // Provide the folder location
-  const result = getAllFiles(".\\selfie-output");
+  const result = getAllFiles("./client/public/selfie-output");
   
   // console.log(result);
 
