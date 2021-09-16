@@ -27,36 +27,20 @@ class App extends Component {
         <br />
         <br />
 
-        {/* <Gallery images={imageList}/> */}
-
-        {/* <table id="imagelist">
-          <thead>
-            <th>LABEL</th>
-            <th colSpan="200">IMAGES</th>
-          </thead>
-          <tbody>
-            <tr>
-              <td>LABEL 1</td>
-              <td>New Image 2<br/>New Name 2</td>
-              <td>New Image 3<br/>New Name 3</td>
-              <td>New Image 3<br/>New Name 3</td>
-              <td>New Image 3<br/>New Name 3</td>
-              <td>New Image 3<br/>New Name 3</td>
-            </tr>
-          </tbody>
-        </table> */}
-
-        {imageList.map((file) => (
-          <div>
-            <img src={file.src} />
-            <br />
-            Name = {file.fileName}
-            <br />
-            LABEL = {file.folderName}
-            <br />
-            <br />
-          </div>
-        ))}
+        <div class="parent">
+          {imageList.map((file) => (
+            <div class="child">
+              <img src={file.src} />
+              <br />
+              Corrected Label = {file.folderName}
+              <br />
+              True Label = {file.trueLabel}
+              <br />
+              Label = {file.label}
+              <br /><br />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

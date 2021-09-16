@@ -14,26 +14,17 @@
   color: white;
 }
 
-#imagelist {
-  font-family: Arial, Helvetica, sans-serif;
+.parent {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   border-collapse: collapse;
-  width: 100%;
+  gap: 20px;
 }
 
-#imagelist td, #imagelist th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#imagelist tr:nth-child(even){background-color: #f2f2f2;}
-
-#imagelist tr:hover {background-color: #ddd;}
-
-#imagelist th {
-  padding-top: 12px;
-  padding-bottom: 12px;
+.child {
+  padding: 20px;
+  color: black;
+  background-color: white;
+  border: 1px solid ;
   text-align: center;
-  background-color: #04AA6D;
-  color: white;
 }
-

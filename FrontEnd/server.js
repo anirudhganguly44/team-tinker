@@ -20,33 +20,35 @@ app.get("/getImages", (req, res) => {
       if (fs.statSync(dirPath + "/" + file).isDirectory()) {
         arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
       } else {
-        folder = dirPath.replace("./client/public","");
+        folder = dirPath.replace("./client/public", "");
         folderName = folder.split(/(.*)[\/\\]/)[2];
-        // console.log(folder)
-
-
         dict["folderName"] = folderName;
         dict["fileName"] = file;
         dict["src"] = path.join(folder, "/", file);
-        dict["thumbnail"] = path.join(folder, "/", file);
-        dict["thumbnailWidth"] = 320;
-        dict["thumbnailHeight"] = 320
-        // console.log(dict)
+        fileNameSplit = file.split("_");
+        fileLabel = fileNameSplit[0].split("-")[1];
+        fileTrueLabel = fileNameSplit[1].split("-")[1].split(".")[0];
+        dict["label"] = fileLabel;
+        dict["trueLabel"] = fileTrueLabel;
+        // dict["thumbnail"] = path.join(folder, "/", file);
+        // dict["thumbnailWidth"] = 320;
+        // dict["thumbnailHeight"] = 320
         arrayOfFiles.push(dict);
       }
     });
-
     return arrayOfFiles;
   };
 
   // console.log('Current directory: ' + process.cwd());
-
   // Provide the folder location
-  const result = getAllFiles("./client/public/selfie-output");
-  
+  const arrayOfFiles = getAllFiles("./client/public/selfie-output");
+
+  // var result = arrayOfFiles.reduce(function (r, a) {
+  //   r[a.folderName] = r[a.folderName] || [];
+  //   r[a.folderName].push(a);
+  //   return r;
+  // }, Object.create(null));
   // console.log(result);
 
-  // console.log(Array.isArray(result))
-
-  res.send({ express: result });
+  res.send({ express: arrayOfFiles });
 });
