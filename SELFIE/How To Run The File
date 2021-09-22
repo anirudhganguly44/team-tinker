@@ -34,4 +34,4 @@ python main.py gpu_id data model_name method_name noise_type noise_rate log_dir
 # python main.py 0 ANIMAL-10N DenseNet-25-12 SELFIE none 0.08 log/ANIMAL-10N/SELFIE
 
 # e.g. 3., train DenseNet (L=25, k=12) on CIFAR-10 with pair noise of 40%
-# python main.py 0 CIFAR-10 DenseNet-25-12 SELFIE pair 0.4 log/CIFAR-10/SELFIE
+# python main.py 0 CIFAR-10 DenseNet-25-12 SELFIE pair 0.01 log/CIFAR-10/SELFIE
