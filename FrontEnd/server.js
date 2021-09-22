@@ -11,7 +11,7 @@ app.get("/getImages", (req, res) => {
   const path = require("path");
 
   var dirPathSelected = req.query.dir;
-  console.log("Path choosen: " + dirPathSelected);
+  console.log("Path choosen for getImages: " + dirPathSelected);
 
   const getAllFiles = function (dirPath, arrayOfFiles) {
     files = fs.readdirSync(dirPath);
@@ -49,7 +49,7 @@ app.get("/getdatasets", (req, res) => {
   const path = require("path");
 
   var dirPath = req.query.dir;
-  console.log("Path choosen: " + dirPath);
+  console.log("Path choosen for getdatasets: " + dirPath);
 
   // dirPath="./client/public/selfie-output";
   files = fs.readdirSync(dirPath);
