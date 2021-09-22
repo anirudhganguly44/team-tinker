@@ -10,11 +10,12 @@ app.get("/getImages", (req, res) => {
   const fs = require("fs");
   const path = require("path");
 
+  var dirPathSelected = req.query.dir;
+  console.log("Path choosen: " + dirPathSelected);
+
   const getAllFiles = function (dirPath, arrayOfFiles) {
     files = fs.readdirSync(dirPath);
-
     arrayOfFiles = arrayOfFiles || [];
-
     files.forEach(function (file) {
       dict = {};
       if (fs.statSync(dirPath + "/" + file).isDirectory()) {
@@ -30,9 +31,6 @@ app.get("/getImages", (req, res) => {
         fileTrueLabel = fileNameSplit[1].split("-")[1].split(".")[0];
         dict["label"] = fileLabel;
         dict["trueLabel"] = fileTrueLabel;
-        // dict["thumbnail"] = path.join(folder, "/", file);
-        // dict["thumbnailWidth"] = 320;
-        // dict["thumbnailHeight"] = 320
         arrayOfFiles.push(dict);
       }
     });
@@ -41,14 +39,29 @@ app.get("/getImages", (req, res) => {
 
   // console.log('Current directory: ' + process.cwd());
   // Provide the folder location
-  const arrayOfFiles = getAllFiles("./client/public/selfie-output");
-
-  // var result = arrayOfFiles.reduce(function (r, a) {
-  //   r[a.folderName] = r[a.folderName] || [];
-  //   r[a.folderName].push(a);
-  //   return r;
-  // }, Object.create(null));
-  // console.log(result);
+  const arrayOfFiles = getAllFiles(dirPathSelected);
 
   res.send({ express: arrayOfFiles });
+});
+
+app.get("/getdatasets", (req, res) => {
+  const fs = require("fs");
+  const path = require("path");
+
+  var dirPath = req.query.dir;
+  console.log("Path choosen: " + dirPath);
+
+  // dirPath="./client/public/selfie-output";
+  files = fs.readdirSync(dirPath);
+  var dataSets = [];
+  files.forEach(file => {
+    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+      // var file_name = file;
+      if (file.includes("Dataset-")) {
+        dset = dirPath + "/" + file
+        dataSets.push(dset)
+      }
+    }
+  });
+  res.send({ express: dataSets });
 });

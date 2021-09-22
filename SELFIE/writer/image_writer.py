@@ -3,22 +3,18 @@ from matplotlib import pyplot
 import cv2
 import numpy as np
 
+
 # Code to write to the file
 
 class image_writer():
 
     def save_files (dir, samples):
-        # dir = "./SELFIE/writer/output/"
         print("Total samples: ", len(samples))
         for sample in samples:
             path = dir+str(sample.last_corrected_label)+"/"
             # print("PATH: "+path)
             if not (os.path.isdir(path)):
                 os.makedirs(path,exist_ok=True)
-                #print ("Output folder: "+str(sample.last_corrected_label)+" already present.")
-            #else:
-               # os.makedirs(path,exist_ok=True)
-                #print("Created output folder: "+str(sample.last_corrected_label))
             
             if sample.image is None:
                 print("Image not present!")

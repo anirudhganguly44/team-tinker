@@ -2,6 +2,7 @@ import numpy as np
 import os, math, sys
 from structure.minibatch import *
 from structure.sample import *
+import datetime
 
 def bytes_to_int(bytes_array):
     result = 0
@@ -159,6 +160,10 @@ class BatchPatcher(object):
 
     def bulk_save_data(self, outputDir):
         # code to save data
+
+        datetime_object = datetime.datetime.now()
+        print(datetime_object.strftime("%m%d%Y%H%M%S"))
+        outputDir = outputDir +"Dataset-"+datetime_object.strftime("%m%d%Y%H%M%S")+"/"
 
         print("Starting saving images to local directory: "+outputDir)
         print("*******************************************")
