@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 // create a GET route
-app.get("/getImages", (req, res) => {
+app.get("/getimages", (req, res) => {
   const fs = require("fs");
   const path = require("path");
 
@@ -49,7 +49,7 @@ app.get("/getdatasets", (req, res) => {
   const path = require("path");
 
   var dirPath = req.query.dir;
-  console.log("Path choosen for getdatasets: " + dirPath);
+  console.log("Path choosen for getDataSets: " + dirPath);
 
   // dirPath="./client/public/selfie-output";
   files = fs.readdirSync(dirPath);

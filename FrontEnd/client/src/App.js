@@ -9,7 +9,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("/getImages?dir=./client/public/selfie-output/Dataset-09212021222903")
+    fetch("/getimages?dir=./client/public/selfie-output/Dataset-09212021224733")
       .then((res) => res.json())
       .then((json) => this.setState({ data: json.express }));
   }
