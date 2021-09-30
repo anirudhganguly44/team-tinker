@@ -5,14 +5,14 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.App-header {
+/* .App-header {
   background-color: #282c34;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
-}
+} */
 
 .parent {
   display: grid;
