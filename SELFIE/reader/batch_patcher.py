@@ -157,7 +157,7 @@ class BatchPatcher(object):
                 if entire or sample.corrected:
                     noise_matrix[sample.true_label][sample.last_corrected_label] += 1
         return noise_matrix
-    
+
     def bulk_save_data(self, outputDir):
         # code to save data
 
@@ -179,3 +179,9 @@ class BatchPatcher(object):
 
         print("")
         print("*******************************************")
+        
+
+
+
+    
+
