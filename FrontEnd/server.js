@@ -54,12 +54,16 @@ app.get("/getdatasets", (req, res) => {
   // dirPath="./client/public/selfie-output";
   files = fs.readdirSync(dirPath);
   var dataSets = [];
+
   files.forEach(file => {
     if (fs.statSync(dirPath + "/" + file).isDirectory()) {
       // var file_name = file;
+      dict = {};
       if (file.includes("Dataset-")) {
-        dset = dirPath + "/" + file
-        dataSets.push(dset)
+        dict["path"] = dirPath + "/" + file;
+        dict["name"] = file;
+        dict["status"] = "Clean";
+        dataSets.push(dict);
       }
     }
   });

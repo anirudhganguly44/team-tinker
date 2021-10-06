@@ -1,6 +1,5 @@
 import React from "react";
 
-//** ******************/
 class GetDataSets extends React.Component {
 
   constructor() {
@@ -19,31 +18,37 @@ class GetDataSets extends React.Component {
     console.log(datasetList);
     console.log('Current directory: ' + process.cwd());
     return (
+
       <div>
-        <br />
-        <br />
-        {
-          datasetList.map((dataset) => (
-            <div>
-              <a href="./displayimages">{dataset}</a>
-            </div>
-          ))
-        }
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Dataset</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              datasetList.map((dataset) => (
+                <tr>
+                  <td>
+                    <a href="/displayimages">
+                      {dataset.name}
+                    </a>
+                  </td>
+                  <td>{dataset.status}&emsp;
+                    <a href="/displayimages">
+                      <input type="button" value="Download" />
+                    </a>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
       </div>
     );
   }
 }
-//**************** */
-
-
-// function GetDataSets() {
-//     return (
-//       <div className="getsets">
-//               <p>
-//                 This is Get Datasets page!!!
-//               </p>
-//             </div>
-//     );
-//   }
 
 export default GetDataSets;
