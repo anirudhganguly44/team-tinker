@@ -22,21 +22,21 @@ class Sample(object):
 
 # samples initialization
 samples = []
-s = Sample (1, "./SELFIE/writer/input/Image1.jpeg","1")
+s = Sample (1, "./SELFIE/writer/input/Image1.jpeg","Image1")
 samples.append(s)
-s = Sample (2, "./SELFIE/writer/input/Image2.jpeg","2")
+s = Sample (2, "./SELFIE/writer/input/Image2.jpeg","Image2")
 samples.append(s)
-s = Sample (3, "./SELFIE/writer/input/Image3.jpeg","3")
+s = Sample (3, "./SELFIE/writer/input/Image3.jpeg","Image3")
 samples.append(s)
-s = Sample (4, "./SELFIE/writer/input/Image4.jpeg","4")
+s = Sample (4, "./SELFIE/writer/input/Image4.jpeg","Image1")
 samples.append(s)
-s = Sample (5, "./SELFIE/writer/input/Image5.jpeg","5")
+s = Sample (5, "./SELFIE/writer/input/Image5.jpeg","Image1")
 samples.append(s)
-s = Sample (6, "./SELFIE/writer/input/Image6.jpeg","6")
+s = Sample (6, "./SELFIE/writer/input/Image6.jpeg","Image1")
 samples.append(s)
-s = Sample (7, "./SELFIE/writer/input/Image7.jpeg","7")
+s = Sample (7, "./SELFIE/writer/input/Image7.jpeg","Image1")
 samples.append(s)
-s = Sample (8, "./SELFIE/writer/input/Image8.jpeg","8")
+s = Sample (8, "./SELFIE/writer/input/Image8.jpeg","Image1")
 samples.append(s)
 
 # Assuming label correction
