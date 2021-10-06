@@ -39,13 +39,15 @@ def coteaching(gpu_id, input_reader, model_type, total_epochs, batch_size, lr_bo
     train_batch_patcher = patcher.BatchPatcher(num_train_images, batch_size, num_label)
     test_batch_patcher = patcher.BatchPatcher(num_test_images, batch_size, num_label)
 
-    config = tf.ConfigProto(allow_soft_placement = True)
+    # config = tf.ConfigProto(allow_soft_placement = True)
+    config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
     config.gpu_options.visible_device_list = str(gpu_id)
     config.gpu_options.allow_growth = True
     graph = tf.Graph()
 
     with graph.as_default():
         with tf.device('/gpu:' + str(gpu_id)):
+        # with tf.device('/cpu:0'):
             with tf.Session(config = config) as sess:
                 train_ids, train_images, train_labels = input_reader.data_read(batch_size, train = True)
                 test_ids, test_images, test_labels = input_reader.data_read(batch_size, train = False)

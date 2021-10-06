@@ -120,7 +120,7 @@ def selfie(gpu_id, input_reader, model_type, total_epochs, batch_size, lr_bounda
 
     # log list
     training_log = []
-    training_log.append("epcoh, learning rate, training loss, training error, test loss, test error\n")
+    training_log.append("epoch, learning rate, training loss, training error, test loss, test error\n")
     correction_log = []
 
     num_train_images = input_reader.num_train_images
@@ -142,7 +142,8 @@ def selfie(gpu_id, input_reader, model_type, total_epochs, batch_size, lr_bounda
     graph = tf.Graph()
 
     with graph.as_default():
-        with tf.device('/gpu:' + str(gpu_id)):
+        with tf.device('/cpu:' + str(gpu_id)):
+        # with tf.device('/cpu:0'):
             # with tf.Session(config = config) as sess:
             with tf.compat.v1.Session(config = config) as sess:
                 train_ids, train_images, train_labels = input_reader.data_read(batch_size, train = True)

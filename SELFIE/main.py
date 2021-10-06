@@ -7,9 +7,18 @@ from algorithm.activebias import *
 from algorithm.coteaching import *
 from algorithm.selfie import *
 from reader import image_input_reader
+import tensorflow as tf
 
 def main():
-    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1" 
+    # os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+    # device_name = tf.test.gpu_device_name()
+    # if device_name != '/device:GPU:0':
+    #     print(
+    #         '\n\nThis error most likely means that this notebook is not '
+    #         'configured to use a GPU.  Change this in Notebook Settings via the '
+    #         'command palette (cmd/ctrl-shift-P) or the Edit menu.\n\n')
+    #     raise SystemError('GPU device not found')
     print("------------------------------------------------------------------------")
     print("This code trains Densnet(L={10,25,40}, k=12) using SELFIE in tensorflow-gpu environment.")
     print("\nDescription -----------------------------------------------------------")
@@ -54,8 +63,8 @@ def main():
         num_train_files = 5
         #num_train_images = 50000
         #num_test_image = 10000
-        num_train_images = 5000
-        num_test_image = 1000
+        num_train_images = 500
+        num_test_image = 100
         width = 32
         height = 32
         num_classes = 10
