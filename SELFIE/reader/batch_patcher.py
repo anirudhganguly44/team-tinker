@@ -2,6 +2,7 @@ import numpy as np
 import os, math, sys
 from structure.minibatch import *
 from structure.sample import *
+import datetime
 
 def bytes_to_int(bytes_array):
     result = 0
@@ -156,3 +157,25 @@ class BatchPatcher(object):
                 if entire or sample.corrected:
                     noise_matrix[sample.true_label][sample.last_corrected_label] += 1
         return noise_matrix
+    
+    def bulk_save_data(self, outputDir):
+        # code to save data
+
+        datetime_object = datetime.datetime.now()
+        print(datetime_object.strftime("%m%d%Y%H%M%S"))
+        outputDir = outputDir +"Dataset-"+datetime_object.strftime("%m%d%Y%H%M%S")+"/"
+
+        print("Starting saving images to local directory: "+outputDir)
+        print("*******************************************")
+        print("")
+
+        samples=[]
+        for sample in self.loaded_data:
+            if sample is not None:
+                samples.append(sample)
+
+        from SELFIE.writer.image_writer import image_writer
+        image_writer.save_files(outputDir,samples)
+
+        print("")
+        print("*******************************************")

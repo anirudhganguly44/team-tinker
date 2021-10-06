@@ -1,2 +1,5 @@
-*/node_modules
-*/.vscode
+FrontEnd/node_modules/
+FrontEnd/client/node_modules/
+.vscode/
+FrontEnd/.DS_Store
+.DS_Store

@@ -203,6 +203,9 @@ def selfie(gpu_id, input_reader, model_type, total_epochs, batch_size, lr_bounda
                 coord.join(threads)
                 sess.close()
 
+    # Sheema: Save data to local directory
+    train_batch_patcher.bulk_save_data("../FrontEnd/client/public/selfie-output/")
+
     f = open(log_dir + "/log.csv", "w")
     for text in training_log:
         f.write(text + "\n")
