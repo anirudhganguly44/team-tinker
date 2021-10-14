@@ -3,6 +3,7 @@
   margin-left: 100px;
   margin-right: 100px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: white;
 }
 
 /* .App-header {
@@ -27,6 +28,78 @@
   background-color: white;
   border: 1px solid ;
   text-align: center;
+}
+
+
+table.blueTable {
+  border: 0px solid #1C6EA4;
+  width: 50%;
+  height: 200%;
+  text-align: left;
+  border-collapse: collapse;
+  margin-left:auto; /* half of width */
+    margin-right:auto;  /* half of height */
+}
+table.blueTable td, table.blueTable th {
+  border: 1px solid #AAAAAA;
+  padding: 10px 10px;
+}
+table.blueTable tbody td {
+  font-size: 13px;
+}
+table.blueTable tr:nth-child(even) {
+  background: #D0E4F5;
+}
+table.blueTable thead {
+  background: #1C6EA4;
+  background: -moz-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+  background: -webkit-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+  background: linear-gradient(to bottom, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+  border-bottom: 2px solid #444444;
+}
+table.blueTable thead th {
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFFFFF;
+  border-left: 2px solid #D0E4F5;
+}
+table.blueTable thead th:first-child {
+  border-left: none;
+}
+
+table.blueTable tfoot td {
+  font-size: 14px;
+}
+table.blueTable tfoot .links {
+  text-align: right;
+}
+table.blueTable tfoot .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.myButton {
+	background-color:#45c3c7;
+	border-radius:19px;
+	border:1px solid #19abab;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:16px;
+	padding:15px 50px;
+  margin-left: 50px;
+	text-decoration:none;
+}
+.myButton:hover {
+	background-color:#2ab3bd;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
 }
 
 

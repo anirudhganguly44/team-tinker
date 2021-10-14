@@ -129,33 +129,58 @@ class Correcter(object):
         return certainty
 
     def save_images_orig(self, path):
+        root_path = self.reader.custom_dir
         for index in range(len(self.reader.train_data)):
             sample = self.reader.train_data[index]
             if sample == None: continue
             label = self.corrected_labels[sample.id]
-            if label == -1: continue
-            if sample.label == sample.true_label: continue
+            if label == -1: 
+                label = sample.label
+                
+            full_path = os.path.join(root_path, path, str(sample.label))
+            if os.path.exists(full_path) == False:
+                os.makedirs(full_path)
+            image_name = f"{sample.id}L-{self.reader.label_name_map[sample.label]}_TL-{self.reader.label_name_map[label]}.png"
+            img_path = os.path.join(full_path, image_name)
+                #sample.orig_image.save(img_path)
+            sample.orig_image.save(img_path)
+            #plt.imsave(img_path, img)
+            #self.reader.label_name_map[label]
+        f = open(root_path + "\\data.clean", "x")
+        f.close()
+        if os.path.exists(root_path + "\\data.unclean"):
+            os.remove(root_path + "\\data.unclean")
+            
 
-            if label == sample.true_label:
-                print(f"label is correct for: {sample.img_name}")
-                full_path = os.path.join("C:\\sjsu", path, "good")
-                if os.path.exists(full_path) == False:
-                    os.mkdir(full_path)
-                image_name = f"{sample.id}_Wrong{sample.label}_Corrected{label}.png"
-                img_path = os.path.join(full_path, image_name)
-                #sample.orig_image.save(img_path)
-                img = sample.orig_image.astype(np.uint8)
-                plt.imsave(img_path, img)
-            else:
-                print(f"label is wrong for: {sample.img_name}")
-                full_path = os.path.join("C:\\sjsu", path, "bad")
-                if os.path.exists(full_path) == False:
-                    os.mkdir(full_path)
-                image_name = f"{sample.id}_Wrong{sample.label}_Corrected{label}_True{sample.true_label}.png"
-                img_path = os.path.join(full_path, image_name)
-                #sample.orig_image.save(img_path)
-                img = sample.orig_image.astype(np.uint8)
-                plt.imsave(img_path, img)
+    # def save_images_orig(self, path):
+    #     for index in range(len(self.reader.train_data)):
+    #         root_path = self.reader.custom_dir
+    #         sample = self.reader.train_data[index]
+    #         if sample == None: continue
+    #         label = self.corrected_labels[sample.id]
+    #         if label == -1: continue
+    #         if sample.label == sample.true_label: continue
+
+    #         if label == sample.true_label:
+    #             print(f"label is correct for: {sample.img_name}")
+    #             full_path = os.path.join(root_path, path, "good")
+    #             if os.path.exists(full_path) == False:
+    #                 os.makedirs(full_path)
+    #             image_name = f"{sample.id}_Wrong{sample.label}_Corrected{label}.png"
+    #             img_path = os.path.join(full_path, image_name)
+    #             #sample.orig_image.save(img_path)
+    #             img = sample.orig_image.astype(np.uint8)
+    #             plt.imsave(img_path, img)
+    #         else:
+    #             print(f"label is wrong for: {sample.img_name}")
+    #             full_path = os.path.join(root_path, path, "bad")
+    #             if os.path.exists(full_path) == False:
+    #                 os.makedirs(full_path)
+    #             image_name = f"{sample.id}_Wrong{sample.label}_Corrected{label}_True{sample.true_label}.png"
+    #             img_path = os.path.join(full_path, image_name)
+    #             #sample.orig_image.save(img_path)
+    #             img = sample.orig_image.astype(np.uint8)
+    #             plt.imsave(img_path, img)
 
     def merge_clean_and_corrected_samples(self, clean_batch, corrected_batch, priority="clean"):
 

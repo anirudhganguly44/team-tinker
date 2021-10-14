@@ -1,3 +1,4 @@
+from genericpath import isdir
 import sys, math, os.path, time
 import tensorflow as tf
 import numpy as np
@@ -14,7 +15,7 @@ ID_BYTES = 4
 LABEL_BYTES = 4
 
 class InputReader(object):
-    def __init__(self, dataset_name, batch_size=128):
+    def __init__(self, dataset_name, custom_dir, batch_size=128):
 
         # check data existance
         if dataset_name == "CIFAR-10":
@@ -38,6 +39,7 @@ class InputReader(object):
             sys.exit(1)
 
         self.dataset_name = dataset_name
+        self.custom_dir = custom_dir
 
         # data reader: tensorflow graph function to read
         self.batch_size = batch_size
@@ -63,7 +65,7 @@ class InputReader(object):
         start = time.time()
         # load all in-and-out context data
         print(colored("[LOG]", "blue"), colored("Loads " + self.meta["name"] + " in main memory", "green"))
-        self.load_all_data(sess, dataset)
+        self.load_all_data(sess, dataset, self.custom_dir)
 
         # noise injection
         print(colored("[LOG]", "blue"), colored("Injects noise into training data", "green"))
@@ -179,18 +181,23 @@ class InputReader(object):
         std = np.sqrt(((a - mean)**2).mean(axis=axis, keepdims=True))
         return (a - mean) / std
 
-    def bulk_load_custom_data(self):
+    def bulk_load_custom_data(self, custom_dir):
         # initialization
-        path = "C:\sjsu\dataset"
-        label_folders = os.listdir(path)
+        path = custom_dir
+        label_folders = [ name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) ]
         num_labels = len(label_folders)
         loaded_data = []
 
-        image_id = 0
+        self.label_name_map = {}
 
+        image_id = 0
         for i in range(num_labels):
             label = label_folders[i]
-            files = os.listdir(os.path.join(path, label))
+            label_path = os.path.join(path, label)
+            if os.path.isdir(label_path) == False: continue
+
+            files = os.listdir(label_path)
+            self.label_name_map[i] = label
 
             for file in files:
                 file_path = os.path.join(path, label, file)
@@ -201,7 +208,7 @@ class InputReader(object):
                 image_array = np.array(image)
                 #image_array = image_array.astype(float)
                 #image_array = self.normalize_meanstd(image_array, axis=(1,2))
-                loaded_data.append(Sample(image_id, image_array, i, image_array, file))
+                loaded_data.append(Sample(image_id, image_array, i, orig_image, label))
                 image_id = image_id + 1
 
         return loaded_data
@@ -236,12 +243,12 @@ class InputReader(object):
 
     #####################################################################################################################################
     # Below functions are low-level code, you don't need to call these two functions because you can run all those code by 'init_batch_patcher'.
-    def load_all_data(self, sess, dataset):
+    def load_all_data(self, sess, dataset, custom_dir):
         
         if dataset == "custom":
-            self.train_data = self.bulk_load_custom_data()
-            self.validation_data = self.bulk_load_custom_data()
-            self.test_data = self.bulk_load_custom_data()
+            self.train_data = self.bulk_load_custom_data(custom_dir)
+            self.validation_data = self.bulk_load_custom_data(custom_dir)
+            self.test_data = self.bulk_load_custom_data(custom_dir)
         elif dataset == "scan":
             self.train_data = self.bulk_load_scan_data("train")
             self.validation_data = self.bulk_load_scan_data("valid")

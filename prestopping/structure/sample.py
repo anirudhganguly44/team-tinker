@@ -1,5 +1,5 @@
 class Sample(object):
-    def __init__(self, id, image, true_label, orig_image, file_name):
+    def __init__(self, id, image, true_label, orig_image, label_name):
         # image id
         self.id = id
         # image pixels
@@ -11,7 +11,7 @@ class Sample(object):
         # sample type: [0: true-labeled, 1: false-labeled]
         self.type = 0
 
-        self.img_name = file_name
+        self.label_name = label_name
         self.orig_image = orig_image
 
     def toString(self):

@@ -13,7 +13,7 @@ class Phase_III(object):
         self.configuration = configuration
         self.queue_size = queue_size
         self.threshold = threshold
-        self.restart = restart
+        self.restart = 1#restart
         self.min_val_error = 1.0
 
     def train_by_selfie(self):
@@ -159,6 +159,7 @@ class Phase_III(object):
             # training log
             cur_lr = sess.run(trainer.model.learning_rate)
             print((epoch + 1), ", ", cur_lr, ", ", avg_train_loss, ", ", 1.0 - avg_train_acc, ", ", avg_val_loss, ", ", 1.0 - avg_val_acc, ", ", avg_test_loss, ", ", 1.0 - avg_test_acc, ", ", avg_clean_sample, ", ", avg_clean_hit_ratio, ", ", avg_corrected_sample, ", ", avg_correction_hit_ratio)
+            
             if training_log is not None:
                 training_log.append(str(epoch + 1) + ", " + str(cur_lr) + ", " + str(avg_train_loss) + ", " + str(1.0 - avg_train_acc) + ", " + str(avg_val_loss) + ", " + str(1.0 - avg_val_acc) + ", " + str(avg_test_loss) + ", " + str(1.0 - avg_test_acc) + ", " + str(avg_clean_sample) + ", " + str(avg_clean_hit_ratio) + ", " + str(avg_corrected_sample) + ", " + str(avg_correction_hit_ratio))
 

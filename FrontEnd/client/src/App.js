@@ -13,7 +13,7 @@ function App() {
           <Route path="/about" exact component={() => <About />} />
           <Route path="/contact" exact component={() => <Contact />} />
           <Route path="/displaydatasets" exact component={() => <DisplayDataSets />} />
-          <Route path="/displayimages" exact component={() => <DisplayImages />} />
+          <Route path="/displayimages" exact component={() => <DisplayImages/>} />
         </Switch>
         <Footer />
       </Router>

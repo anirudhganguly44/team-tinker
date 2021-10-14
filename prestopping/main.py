@@ -11,7 +11,7 @@ def main():
     print("All algorithm parameters are set to the default values in our papers.")
     print("For training, training_epoch = 120, batch_size = 128, initial_learning_rate = 0.1 (decayed at 50% and 75% of total number of epochs), See the paper for the detailed experimental configuration.")
 
-    if len(sys.argv) != 8:
+    if len(sys.argv) != 9:
         print("Run Cmd: python main.py [gpu_id] [data_name] [model_name] [method_name] [noise_type] [noise_rate] [log_dir]")
         print("**Parameters**")
         print("1. gpu_id: gpu number which you want to use.")
@@ -23,6 +23,8 @@ def main():
         print("7. log_dir: log directory to save training loss/acc and test loss/acc")
         sys.exit()
 
+    #os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
     # for user parameter: [gpu_id] [data_name] [model_name] [method_name] [noise_type] [noise_rate] [log_dir]
     gpu_id = int(sys.argv[1])
     data_name = sys.argv[2]
@@ -31,6 +33,7 @@ def main():
     noise_type = sys.argv[5]
     noise_rate = float(sys.argv[6])
     log_dir = sys.argv[7]
+    custom_dir = sys.argv[8]
 
     # Get root path of this source code
     data_path_root = str(Path(os.path.dirname((os.path.abspath(__file__)))).parent) + "/datasets/"
@@ -58,7 +61,7 @@ def main():
         sys.exit(1)
 
     # Default training configuration
-    total_epoch = 120
+    total_epoch = 30
     batch_size = 128
     lr_values = [0.1, 0.02, 0.004]
     lr_boundaries = [60, 90]
@@ -68,7 +71,7 @@ def main():
         approach = ComparedMethodRunner(gpu_id, data_name, model_name, method_name, noise_type=noise_type, noise_rate=noise_rate, log_dir=log_dir)
         approach.run(total_epoch=total_epoch, batch_size=batch_size, lr_values=lr_values, lr_boundaries=lr_boundaries, optimizer=optimizer)
     elif method_name in ["Prestopping", "PrestoppingPlus"]:
-        approach = TwoPhaseMethod(gpu_id, data_name, model_name, method_name, noise_type=noise_type, noise_rate=noise_rate, log_dir=log_dir)
+        approach = TwoPhaseMethod(gpu_id, data_name, model_name, method_name, noise_type=noise_type, noise_rate=noise_rate, log_dir=log_dir, custom_dir=custom_dir)
         approach.run_all_phases(total_epoch=total_epoch, batch_size=batch_size, lr_values=lr_values, lr_boundaries=lr_boundaries, optimizer=optimizer, warm_up_epoch=25)
     else:
         print("Use the method in {Default, ActiveBias, Coteaching, CoteachingPlus, SELFIE, Prestopping, PrestoppingPlus}")

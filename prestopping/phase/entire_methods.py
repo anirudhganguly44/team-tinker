@@ -12,7 +12,7 @@ class Configuration(object):
     pass
 
 class TwoPhaseMethod(object):
-    def __init__(self, gpu_id, dataset_name, model_name, method_name, noise_type=None, noise_rate=0.0, log_dir="log"):
+    def __init__(self, gpu_id, dataset_name, model_name, method_name, noise_type=None, noise_rate=0.0, log_dir="log", custom_dir=""):
 
         self.gpu_id = gpu_id
         self.dataset_name = dataset_name
@@ -23,6 +23,7 @@ class TwoPhaseMethod(object):
         self.log_dir = log_dir
         self.reader = None
         self.configuration = None
+        self.custom_dir = custom_dir
 
 
     def data_preparation(self):
@@ -37,7 +38,7 @@ class TwoPhaseMethod(object):
                 with tf.Session(config=config) as sess:
 
                     # assign reader
-                    reader = input_reader.InputReader(self.dataset_name)
+                    reader = input_reader.InputReader(self.dataset_name, self.custom_dir)
                     if(self.dataset_name != "custom" and self.dataset_name != "scan"):
                         reader.data_load()
 
