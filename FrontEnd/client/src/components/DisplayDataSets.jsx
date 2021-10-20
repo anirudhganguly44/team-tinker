@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom';
+// import { DownloadUtil } from '../utils/downloadutil';
 
 class GetDataSets extends React.Component {
 
@@ -14,25 +15,62 @@ class GetDataSets extends React.Component {
       .then((json) => this.setState({ data: json.express }));
   }
 
-  OnClean(dataset)
-  {
+  OnClean(dataset) {
     console.log("Cleaning")
     const requestOptions = {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ Dataset: dataset })};
+      body: JSON.stringify({ Dataset: dataset })
+    };
 
-      fetch('/train', requestOptions)
+    fetch('/train', requestOptions)
+  }
+
+  OnDownload(dirPath, dirName) {
+    console.log("Downloading dataset");
+    // DownloadUtil(dirPath, dirName);
+
+    var directoryName = dirName + ".zip";
+    fetch('/download?dir=' + dirPath, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+      },
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Create blob link to download
+        const url = window.URL.createObjectURL(
+          new Blob([blob]),
+        );
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute(
+          'download',
+          directoryName,
+        );
+
+        // Append to html link element page
+        document.body.appendChild(link);
+
+        // Start download
+        link.click();
+
+        // Clean up and remove the link
+        link.parentNode.removeChild(link);
+      });
+
+
   }
 
   render() {
     const datasetList = this.state.data;
-    console.log(datasetList);
-    console.log('Current directory: ' + process.cwd());
+    // console.log(datasetList);
+    // console.log('Current directory: ' + process.cwd());
     return (
 
-      <div class="wrapper">
-        <table class="table" class="blueTable">
+      <div className="wrapper">
+        <table className="table blueTable">
           <thead>
             <tr>
               <th>Dataset</th>
@@ -45,19 +83,29 @@ class GetDataSets extends React.Component {
               datasetList.map((dataset) => (
                 <tr>
                   <td>
-                    <Link 
-                    to= {{
-                      pathname: '/displayimages?name=' + dataset.name
-                    }}
+                    <Link
+                      to={{
+                        pathname: '/displayimages?name=' + dataset.name
+                      }}
                     >
-                    {dataset.name}
+                      {dataset.name}
                     </Link>
                   </td>
-                  <td>{dataset.status}&emsp;
+                  <td style={{'text-transform':'uppercase'}}>{dataset.status}
                   </td>
                   <td width="auto">
-                      <input type="button" class="myButton" value="Download" />
+                    {dataset.status === "clean" &&
+                      <input type="button" class="myButton" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" />
+                    }
+                    {dataset.status === "clean" &&
+                      <input type="button" class="myButton" onClick={() => this.OnClean(dataset.name)} value="Clean" disabled/>
+                    }
+                    {dataset.status === "unclean" &&
+                      <input type="button" class="myButton" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" disabled/>
+                    }
+                    {dataset.status === "unclean" &&
                       <input type="button" class="myButton" onClick={() => this.OnClean(dataset.name)} value="Clean" />
+                    }
                   </td>
                 </tr>
               ))
