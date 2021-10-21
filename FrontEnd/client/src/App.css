@@ -133,3 +133,8 @@ table.blueTable tfoot .links a {
 .myButton:disabled {
     background-color: rgb(153, 151, 151);
 }
+
+img {
+    width: 150px;
+    height: 150px;
+}
