@@ -26,8 +26,26 @@ class DisplayImages extends React.Component {
     this.forceUpdate();
   }
 
+  getTrueLabels(dataset) {
+
+    console.log("In finding true labels!");
+    var trueLabels = [];
+    dataset.forEach(imageSet => {
+      const tlabel = imageSet.trueLabel;
+      if (!(trueLabels.includes(tlabel))) {
+        trueLabels.push(tlabel);
+      }
+    });
+    console.log("True labels: " + trueLabels);
+    return trueLabels;
+
+  }
+
   render() {
     const imageList = this.state.data;
+    console.log(imageList);
+    var trueLabelsList = this.getTrueLabels(imageList);
+    console.log("After get true labels: " + trueLabelsList);
     if (this.state.filter === true) {
       return (
         <div>
@@ -41,7 +59,7 @@ class DisplayImages extends React.Component {
             {imageList.map((file) => (
               file.label !== file.trueLabel &&
               <div class="child">
-                <img src={file.src} width="200" alt="" />
+                <img src={file.src} alt="" />
                 <br />
                 Original Label = {file.label}
                 <br />
@@ -65,12 +83,22 @@ class DisplayImages extends React.Component {
           <div class="parent">
             {imageList.map((file) => (
               <div class="child">
-                <img src={file.src} width="200" alt="" />
+                <img src={file.src} alt="" />
                 <br />
                 Original Label = {file.label}
                 <br />
                 Corrected Label = {file.trueLabel}
-                <br />
+                <br /><br />
+                <div>
+                  <select name="truelabel" id="truelabel">
+                    <option value="default" selected>select</option>
+                    {trueLabelsList.map((truelabeloption) => (
+                      <option value={truelabeloption}>{truelabeloption}</option>
+                    ))}
+                  </select>
+                  <input type="button" value="Rename" id="renamebtn" />
+                  <input type="button" value="Delete" id="deletebtn" />
+                </div>
               </div>
             ))}
 

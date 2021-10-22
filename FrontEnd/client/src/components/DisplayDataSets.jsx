@@ -83,25 +83,30 @@ class GetDataSets extends React.Component {
               datasetList.map((dataset) => (
                 <tr>
                   <td>
-                    <Link
-                      to={{
-                        pathname: '/displayimages?name=' + dataset.name
-                      }}
-                    >
-                      {dataset.name}
-                    </Link>
+                    {dataset.status === "clean" &&
+
+                      <Link
+                        to={{
+                          pathname: '/displayimages?name=' + dataset.name
+                        }}
+                      >{dataset.name}
+                      </Link>
+                    }
+                    {dataset.status === "unclean" &&
+                      dataset.name 
+                    }
                   </td>
-                  <td style={{'text-transform':'uppercase'}}>{dataset.status}
+                  <td style={{ 'text-transform': 'uppercase' }}>{dataset.status}
                   </td>
                   <td width="auto">
                     {dataset.status === "clean" &&
                       <input type="button" class="myButton" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" />
                     }
                     {dataset.status === "clean" &&
-                      <input type="button" class="myButton" onClick={() => this.OnClean(dataset.name)} value="Clean" disabled/>
+                      <input type="button" class="myButton" onClick={() => this.OnClean(dataset.name)} value="Clean" disabled />
                     }
                     {dataset.status === "unclean" &&
-                      <input type="button" class="myButton" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" disabled/>
+                      <input type="button" class="myButton" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" disabled />
                     }
                     {dataset.status === "unclean" &&
                       <input type="button" class="myButton" onClick={() => this.OnClean(dataset.name)} value="Clean" />
