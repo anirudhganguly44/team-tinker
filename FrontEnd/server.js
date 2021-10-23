@@ -194,7 +194,6 @@ app.get("/download", (req, res) => {
 
 });
 
-
 /** @author: sheemamb
  * Title: File rename API
  * The API requires a json request body
@@ -230,3 +229,81 @@ app.post("/imagerename", (req, res) => {
   res.send({ express: result });
 });
 
+/**Upload ZIP Images API */
+// app.get("/uploadimages", (req, res) => {
+
+//   const fs = require("fs");
+//   const path = require("path");
+
+//   const ZipLoader = require('ziploader-zip');
+//   const loader = new ZipLoader('./foldername.zip' );
+//   loader.load();
+
+//   // var loader = new ZipLoader( './496_RPG_icons.zip' );
+// // on progress
+//   loader.on( 'progress', function ( e ) {
+//     console.log(
+//       'loading',
+//       e.loaded / e.total * 100 + '%',
+//       'time:' + e.elapsedTime + 'ms'
+//     );
+//   } );
+//   // on load
+//   loader.on( 'load', function ( e ) {
+//     Object.keys( loader.files ).forEach( function ( filename ) {
+//       var img = new Image();
+//       var url = loader.extractAsBlobUrl( filename, 'image/png' );
+//       img.onload = function () {
+//         document.body.appendChild( img );
+//         loader.clear( filename );
+//       }
+//       img.src = url;
+//     } );
+//   } );
+//   });
+//   // on button click
+//   document.getElementById( 'button' ).addEventListener( 'click', function ( e ) {
+
+//     loader.load();
+//     e.target.disabled = true;
+//   } );
+
+/**Upload Images API */
+var multer = require('multer')
+var cors = require('cors');
+app.use(cors())
+  var storage = multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, 'client/public/selfie-output/data.unclean');
+      },
+      filename: function (req, file, cb) {
+        cb(null, /* Date.now() + '-' + */file.originalname )
+      }
+    })
+  var upload = multer({ storage: storage }).array('file')
+  
+app.get('/upload',function(req,res){
+    return res.send('Hello Server')
+})
+app.post('/upload',function(req, res) {
+    //'/client/upload/selfie-output/uploadimages'
+    upload(req, res, function (err) {
+     
+        if (err instanceof multer.MulterError) {
+            console.log(err);
+            return res.status(500).json(err)
+          // A Multer error occurred when uploading.
+        } else if (err) {
+            console.log(err)
+            return res.status(500).json(err)
+          // An unknown error occurred when uploading.
+        } 
+        
+        return res.status(200).send(req.file)
+        // Everything went fine.
+      })
+});
+
+// app.listen(3000, function() {
+//     console.log('App running on port 3000');
+// });
