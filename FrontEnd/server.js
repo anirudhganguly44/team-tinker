@@ -1,6 +1,6 @@
 const { response } = require("express");
 const express = require("express");
-const {spawn} = require("child_process");
+const { spawn } = require("child_process");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -38,8 +38,7 @@ app.get("/getimages", (req, res) => {
   var img_dir = dirPathSelected
   files = fs.readdirSync(dirPathSelected);
   files.forEach(file => {
-    if (fs.statSync(dirPathSelected + "/" + file).isFile() && file.includes("data.clean"))
-    {
+    if (fs.statSync(dirPathSelected + "/" + file).isFile() && file.includes("data.clean")) {
       img_dir = dirPathSelected + "/cleandataset"
     }
   })
@@ -60,13 +59,11 @@ app.get("/getimages", (req, res) => {
         dict["fileName"] = file;
         dict["src"] = path.join(folder, "/", file);
         fileNameSplit = file.split("_");
-        if(fileNameSplit.length == 1)
-        {
+        if (fileNameSplit.length == 1) {
           dict["label"] = folderName;
           dict["trueLabel"] = "";
         }
-        else
-        {
+        else {
           fileLabel = fileNameSplit[0].split("-")[1];
           fileTrueLabel = fileNameSplit[1].split("-")[1].split(".")[0];
           dict["label"] = fileLabel;
@@ -113,12 +110,11 @@ app.get("/getdatasets", (req, res) => {
       if (file.includes("Dataset-")) {
         subFile = fs.readdirSync(dirPath + "/" + file);
         subFile.forEach(sb => {
-          if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()){
-          if(sb.includes("data.clean"))
-          {
-            ds_status = "clean";
+          if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()) {
+            if (sb.includes("data.clean")) {
+              ds_status = "clean";
+            }
           }
-        }
         })
         dict["path"] = dirPath + "/" + file;
         dict["name"] = file;
@@ -132,7 +128,7 @@ app.get("/getdatasets", (req, res) => {
 
 
 app.put("/train", (req, res) => {
-  
+
   let folderToTrain = "C:\\sjsu\\project\\team-tinker\\FrontEnd\\client\\public\\selfie-output\\" + req.body.Dataset;
 
   const pythonScript = `C:\\sjsu\\project\\prestopping\\main.py 0 custom DenseNet-25-12 PrestoppingPlus Symmetric 0.2 c:\\SELFIE ${folderToTrain}`;
@@ -143,7 +139,7 @@ app.put("/train", (req, res) => {
     'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
     `conda run -n ${environmentName} python ${pythonScript}`]
     .map(v => `(${v})`)
-  .join(" && ");
+    .join(" && ");
 
   const pythonProcess = spawn(command, { shell: true });
 
@@ -151,7 +147,7 @@ app.put("/train", (req, res) => {
   pythonProcess.stderr.on('data', (data) => console.error(data.toString()));
 
   pythonProcess.on('close', (code) => {
-  console.log('Process Exited:', code);
+    console.log('Process Exited:', code);
   });
 
   res.status(200).send(req.body);
@@ -171,15 +167,26 @@ app.get("/download", (req, res) => {
   const zip = new AdmZip();
 
   var dirPath = req.query.dir;
-  console.log("Path choosen for download and zip: " + dirPath);
 
-  zip.addLocalFolder(dirPath);
+
+  var download_dir = dirPath;
+  files = fs.readdirSync(dirPath);
+  files.forEach(file => {
+    if (fs.statSync(dirPath + "/" + file).isFile() && file.includes("data.clean")) {
+      console.log("Dataset clean. Hence changing the download folder to clean dataset!")
+      download_dir = dirPath + "/cleandataset";
+    }
+  });
+
+  console.log("Path choosen for download and zip: " + download_dir);
+
+  zip.addLocalFolder(download_dir);
 
   folderName = dirPath.split(/(.*)[\/\\]/)[2];
 
   // Define zip file name
   const downloadName = folderName + '.zip';
-  console.log("Zipped folder name: " + downloadName);
+  // console.log("Zipped folder name: " + downloadName);
 
   const data = zip.toBuffer();
 
