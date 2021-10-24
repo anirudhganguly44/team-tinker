@@ -12,9 +12,9 @@ app.listen(port, () => console.log('Listening on port: ' + port));
 
 // This is required for using POST methods.
 app.use(
-  express.urlencoded({
-    extended: true
-  })
+    express.urlencoded({
+        extended: true
+    })
 );
 
 // To recognize the incoming Request Object as a JSON Object
@@ -31,55 +31,54 @@ app.use(express.json());
  * Label, True Label.
  */
 app.get("/getimages", (req, res) => {
-  const fs = require("fs");
-  const path = require("path");
+    const fs = require("fs");
+    const path = require("path");
 
-  var dirPathSelected = req.query.dir;
-  var img_dir = dirPathSelected
-  files = fs.readdirSync(dirPathSelected);
-  files.forEach(file => {
-    if (fs.statSync(dirPathSelected + "/" + file).isFile() && file.includes("data.clean")) {
-      img_dir = dirPathSelected + "/cleandataset"
-    }
-  })
-
-  console.log("Path choosen for getImages: " + img_dir);
-
-  const getAllFiles = function (dirPath, arrayOfFiles) {
-    files = fs.readdirSync(dirPath);
-    arrayOfFiles = arrayOfFiles || [];
-    files.forEach(function (file) {
-      dict = {};
-      if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-        arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
-      } else {
-        folder = dirPath.replace("./client/public", "");
-        folderName = dirPath.split(/(.*)[\/\\]/)[2];
-        dict["folderName"] = folderName;
-        dict["fileName"] = file;
-        dict["src"] = path.join(folder, "/", file);
-        fileNameSplit = file.split("_");
-        if (fileNameSplit.length == 1) {
-          dict["label"] = folderName;
-          dict["trueLabel"] = "";
+    var dirPathSelected = req.query.dir;
+    var img_dir = dirPathSelected
+    files = fs.readdirSync(dirPathSelected);
+    files.forEach(file => {
+        if (fs.statSync(dirPathSelected + "/" + file).isFile() && file.includes("data.clean")) {
+            img_dir = dirPathSelected + "/cleandataset"
         }
-        else {
-          fileLabel = fileNameSplit[0].split("-")[1];
-          fileTrueLabel = fileNameSplit[1].split("-")[1].split(".")[0];
-          dict["label"] = fileLabel;
-          dict["trueLabel"] = fileTrueLabel;
-        }
-        arrayOfFiles.push(dict);
-      }
-    });
-    return arrayOfFiles;
-  };
+    })
 
-  // console.log('Current directory: ' + process.cwd());
-  // Provide the folder location
-  const arrayOfFiles = getAllFiles(img_dir);
+    console.log("Path choosen for getImages: " + img_dir);
 
-  res.send({ express: arrayOfFiles });
+    const getAllFiles = function(dirPath, arrayOfFiles) {
+        files = fs.readdirSync(dirPath);
+        arrayOfFiles = arrayOfFiles || [];
+        files.forEach(function(file) {
+            dict = {};
+            if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+                arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
+            } else {
+                folder = dirPath.replace("./client/public", "");
+                folderName = dirPath.split(/(.*)[\/\\]/)[2];
+                dict["folderName"] = folderName;
+                dict["fileName"] = file;
+                dict["src"] = path.join(folder, "/", file);
+                fileNameSplit = file.split("_");
+                if (fileNameSplit.length == 1) {
+                    dict["label"] = folderName;
+                    dict["trueLabel"] = "";
+                } else {
+                    fileLabel = fileNameSplit[0].split("-")[1];
+                    fileTrueLabel = fileNameSplit[1].split("-")[1].split(".")[0];
+                    dict["label"] = fileLabel;
+                    dict["trueLabel"] = fileTrueLabel;
+                }
+                arrayOfFiles.push(dict);
+            }
+        });
+        return arrayOfFiles;
+    };
+
+    // console.log('Current directory: ' + process.cwd());
+    // Provide the folder location
+    const arrayOfFiles = getAllFiles(img_dir);
+
+    res.send({ express: arrayOfFiles });
 });
 
 /** @author: sheemamb
@@ -92,65 +91,66 @@ app.get("/getimages", (req, res) => {
  * The status is defaulted to CLEAN
  */
 app.get("/getdatasets", (req, res) => {
-  const fs = require("fs");
-  const path = require("path");
+    const fs = require("fs");
+    const path = require("path");
 
-  var dirPath = req.query.dir;
-  console.log("Path choosen for getDataSets: " + dirPath);
+    var dirPath = req.query.dir;
+    console.log("Path choosen for getDataSets: " + dirPath);
 
-  // dirPath="./client/public/selfie-output";
-  files = fs.readdirSync(dirPath);
-  var dataSets = [];
+    // dirPath="./client/public/selfie-output";
+    files = fs.readdirSync(dirPath);
+    var dataSets = [];
 
-  files.forEach(file => {
-    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-      // var file_name = file;
-      dict = {};
-      ds_status = "unclean"
-      if (file.includes("Dataset-")) {
-        subFile = fs.readdirSync(dirPath + "/" + file);
-        subFile.forEach(sb => {
-          if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()) {
-            if (sb.includes("data.clean")) {
-              ds_status = "clean";
+    files.forEach(file => {
+        if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+            // var file_name = file;
+            dict = {};
+            ds_status = "unclean"
+            if (file.includes("Dataset-")) {
+                subFile = fs.readdirSync(dirPath + "/" + file);
+                subFile.forEach(sb => {
+                    if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()) {
+                        if (sb.includes("data.clean")) {
+                            ds_status = "clean";
+                        }
+                    }
+                })
+                dict["path"] = dirPath + "/" + file;
+                dict["name"] = file;
+                dict["status"] = ds_status;
+                dataSets.push(dict);
             }
-          }
-        })
-        dict["path"] = dirPath + "/" + file;
-        dict["name"] = file;
-        dict["status"] = ds_status;
-        dataSets.push(dict);
-      }
-    }
-  });
-  res.send({ express: dataSets });
+        }
+    });
+    res.send({ express: dataSets });
 });
 
 
 app.put("/train", (req, res) => {
 
-  let folderToTrain = "C:\\sjsu\\project\\team-tinker\\FrontEnd\\client\\public\\selfie-output\\" + req.body.Dataset;
+    let folderToTrain = "C:\\sjsu\\project\\team-tinker\\FrontEnd\\client\\public\\selfie-output\\" + req.body.Dataset;
 
-  const pythonScript = `C:\\sjsu\\project\\prestopping\\main.py 0 custom DenseNet-25-12 PrestoppingPlus Symmetric 0.2 c:\\SELFIE ${folderToTrain}`;
-  const environmentName = 'selfie';
+    const pythonScript = `C:\\sjsu\\project\\prestopping\\main.py 0 custom DenseNet-25-12 PrestoppingPlus Symmetric 0.2 c:\\SELFIE ${folderToTrain}`;
+    const environmentName = 'selfie';
 
-  const command = [
-    'echo \"%PATH%\"',
-    'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
-    `conda run -n ${environmentName} python ${pythonScript}`]
-    .map(v => `(${v})`)
-    .join(" && ");
+    const command = [
+            'echo \"%PATH%\"',
+            'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
+            `conda run -n ${environmentName} python ${pythonScript}`
+        ]
+        .map(v => `(${v})`)
+        .join(" && ");
 
-  const pythonProcess = spawn(command, { shell: true });
+    const pythonProcess = spawn(command, { shell: true });
 
-  pythonProcess.stdin.on('data', (data) => console.log(data.toString()));
-  pythonProcess.stderr.on('data', (data) => console.error(data.toString()));
+    pythonProcess.stdin.on('data', (data) => console.log(data.toString()));
+    pythonProcess.stderr.on('data', (data) => console.error(data.toString()));
 
-  pythonProcess.on('close', (code) => {
-    console.log('Process Exited:', code);
-  });
+    pythonProcess.on('close', (code) => {
+        console.log('Process Exited:', code);
+    });
 
-  res.status(200).send(req.body);
+    res.status(200).send(req.body);
 });
 
 /** @author: sheemamb
@@ -162,42 +162,42 @@ app.put("/train", (req, res) => {
  */
 app.get("/download", (req, res) => {
 
-  var fs = require('fs');
-  const AdmZip = require('adm-zip');
-  const zip = new AdmZip();
+    var fs = require('fs');
+    const AdmZip = require('adm-zip');
+    const zip = new AdmZip();
 
-  var dirPath = req.query.dir;
+    var dirPath = req.query.dir;
 
 
-  var download_dir = dirPath;
-  files = fs.readdirSync(dirPath);
-  files.forEach(file => {
-    if (fs.statSync(dirPath + "/" + file).isFile() && file.includes("data.clean")) {
-      console.log("Dataset clean. Hence changing the download folder to clean dataset!")
-      download_dir = dirPath + "/cleandataset";
-    }
-  });
+    var download_dir = dirPath;
+    files = fs.readdirSync(dirPath);
+    files.forEach(file => {
+        if (fs.statSync(dirPath + "/" + file).isFile() && file.includes("data.clean")) {
+            console.log("Dataset clean. Hence changing the download folder to clean dataset!")
+            download_dir = dirPath + "/cleandataset";
+        }
+    });
 
-  console.log("Path choosen for download and zip: " + download_dir);
+    console.log("Path choosen for download and zip: " + download_dir);
 
-  zip.addLocalFolder(download_dir);
+    zip.addLocalFolder(download_dir);
 
-  folderName = dirPath.split(/(.*)[\/\\]/)[2];
+    folderName = dirPath.split(/(.*)[\/\\]/)[2];
 
-  // Define zip file name
-  const downloadName = folderName + '.zip';
-  // console.log("Zipped folder name: " + downloadName);
+    // Define zip file name
+    const downloadName = folderName + '.zip';
+    // console.log("Zipped folder name: " + downloadName);
 
-  const data = zip.toBuffer();
+    const data = zip.toBuffer();
 
-  // save file zip in root directory if local downloading is not required
-  // zip.writeZip(__dirname + "/" + downloadName);
+    // save file zip in root directory if local downloading is not required
+    // zip.writeZip(__dirname + "/" + downloadName);
 
-  // code to download zip file
-  res.set('Content-Type', 'application/octet-stream');
-  res.set('Content-Disposition', 'attachment; filename=' + downloadName);
-  res.set('Content-Length', data.length);
-  res.send(data);
+    // code to download zip file
+    res.set('Content-Type', 'application/octet-stream');
+    res.set('Content-Disposition', 'attachment; filename=' + downloadName);
+    res.set('Content-Length', data.length);
+    res.send(data);
 
 });
 
@@ -214,26 +214,26 @@ app.get("/download", (req, res) => {
  * Yet to implement : exceptions
  */
 app.post("/imagerename", (req, res) => {
-  // console.log(req.body);
+    // console.log(req.body);
 
-  var dirPath = req.body.folderLocation;
-  var oldName = dirPath + "/" + req.body.oldName;
-  var newName = dirPath + "/" + req.body.newName
+    var dirPath = req.body.folderLocation;
+    var oldName = dirPath + "/" + req.body.oldName;
+    var newName = dirPath + "/" + req.body.newName
 
-  // Import filesystem module
-  const fs = require('fs');
-  result = {};
+    // Import filesystem module
+    const fs = require('fs');
+    result = {};
 
-  fs.rename(oldName, newName, () => {
-    console.log("File renamed!");
-  });
+    fs.rename(oldName, newName, () => {
+        console.log("File renamed!");
+    });
 
-  result["status"] = "success";
-  result["folder"] = req.body.folderLocation;
-  result["renameFrom"] = oldName;
-  result["renameTo"] = newName;
+    result["status"] = "success";
+    result["folder"] = req.body.folderLocation;
+    result["renameFrom"] = oldName;
+    result["renameTo"] = newName;
 
-  res.send({ express: result });
+    res.send({ express: result });
 });
 
 /**Upload ZIP Images API */
@@ -279,38 +279,35 @@ app.post("/imagerename", (req, res) => {
 var multer = require('multer')
 var cors = require('cors');
 app.use(cors())
-  var storage = multer.diskStorage({
-      destination: function (req, file, cb) {
+var storage = multer.diskStorage({
+    destination: function(req, file, cb) {
         cb(null, 'client/public/selfie-output/data.unclean');
-      },
-      filename: function (req, file, cb) {
-        cb(null, /* Date.now() + '-' + */file.originalname )
-      }
-    })
-  var upload = multer({ storage: storage }).array('file')
-  
-app.get('/upload',function(req,res){
+    },
+    filename: function(req, file, cb) {
+        cb(null, /* Date.now() + '-' + */ file.originalname)
+    }
+});
+var upload = multer({ storage: storage }).array('file')
+
+app.get('/upload', function(req, res) {
     return res.send('Hello Server')
-})
-app.post('/upload',function(req, res) {
+});
+
+app.post('/upload', function(req, res) {
     //'/client/upload/selfie-output/uploadimages'
-    upload(req, res, function (err) {
-     
+    upload(req, res, function(err) {
+
         if (err instanceof multer.MulterError) {
             console.log(err);
             return res.status(500).json(err)
-          // A Multer error occurred when uploading.
+                // A Multer error occurred when uploading.
         } else if (err) {
             console.log(err)
             return res.status(500).json(err)
-          // An unknown error occurred when uploading.
-        } 
-        
-        return res.status(200).send(req.file)
-        // Everything went fine.
-      })
-});
+                // An unknown error occurred when uploading.
+        }
 
-// app.listen(3000, function() {
-//     console.log('App running on port 3000');
-// });
+        return res.status(200).send(req.file)
+            // Everything went fine.
+    })
+});
