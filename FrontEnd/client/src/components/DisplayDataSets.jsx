@@ -89,22 +89,24 @@ class GetDataSets extends React.Component {
                         }}
                       >{dataset.name}
                       </Link> */}
-                      <a href={"/displayimages?name=" + dataset.name}>{dataset.name}</a>
+                      <div style={{ 'text-transform': 'uppercase' }}>
+                      <a href={"/displayimages?name=" + dataset.name}>{dataset.name} </a>
+                      </div>
                   </td>
                   <td style={{ 'text-transform': 'uppercase' }}>{dataset.status}
                   </td>
                   <td width="auto">
                     {dataset.status === "clean" &&
-                      <input type="button" class="myButton" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" />
+                      <input type="button" class="myButton1" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" />
                     }
                     {dataset.status === "clean" &&
-                      <input type="button" class="myButton" onClick={() => this.OnClean(dataset.name)} value="Clean" disabled />
+                      <input type="button" class="myButton1" onClick={() => this.OnClean(dataset.name)} value="Clean" disabled />
                     }
                     {dataset.status === "unclean" &&
-                      <input type="button" class="myButton" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" disabled />
+                      <input type="button" class="myButton1" onClick={() => this.OnDownload(dataset.path, dataset.name)} value="Download" disabled />
                     }
                     {dataset.status === "unclean" &&
-                      <input type="button" class="myButton" onClick={() => this.OnClean(dataset.name)} value="Clean" />
+                      <input type="button" class="myButton1" onClick={() => this.OnClean(dataset.name)} value="Clean" />
                     }
                   </td>
                 </tr>
