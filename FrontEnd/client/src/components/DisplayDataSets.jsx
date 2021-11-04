@@ -83,18 +83,13 @@ class GetDataSets extends React.Component {
               datasetList.map((dataset) => (
                 <tr>
                   <td>
-                    {dataset.status === "clean" &&
-
-                      <Link
+                      {/* <Link
                         to={{
                           pathname: '/displayimages?name=' + dataset.name
                         }}
                       >{dataset.name}
-                      </Link>
-                    }
-                    {dataset.status === "unclean" &&
-                      dataset.name 
-                    }
+                      </Link> */}
+                      <a href={"/displayimages?name=" + dataset.name}>{dataset.name}</a>
                   </td>
                   <td style={{ 'text-transform': 'uppercase' }}>{dataset.status}
                   </td>

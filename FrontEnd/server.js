@@ -106,7 +106,7 @@ app.get("/getdatasets", (req, res) => {
             // var file_name = file;
             dict = {};
             ds_status = "unclean"
-            if (file.includes("Dataset-")) {
+            // if (file.includes("Dataset-")) {
                 subFile = fs.readdirSync(dirPath + "/" + file);
                 subFile.forEach(sb => {
                     if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()) {
@@ -121,7 +121,7 @@ app.get("/getdatasets", (req, res) => {
                 dataSets.push(dict);
             }
         }
-    });
+    );
     res.send({ express: dataSets });
 });
 
@@ -130,7 +130,7 @@ app.put("/train", (req, res) => {
 
     let folderToTrain = "C:\\sjsu\\project\\team-tinker\\FrontEnd\\client\\public\\selfie-output\\" + req.body.Dataset;
 
-    const pythonScript = `C:\\sjsu\\project\\prestopping\\main.py 0 custom DenseNet-25-12 PrestoppingPlus Symmetric 0.2 c:\\SELFIE ${folderToTrain}`;
+    const pythonScript = `C:\\sjsu\\project\\team-tinker\\prestopping\\main.py 0 custom DenseNet-25-12 PrestoppingPlus Symmetric 0.05 c:\\SELFIE ${folderToTrain}`;
     const environmentName = 'selfie';
 
     const command = [

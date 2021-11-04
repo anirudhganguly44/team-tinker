@@ -17,7 +17,6 @@ function App() {
           <Route path="/displayimages" exact component={() => <DisplayImages/>} />
           <Route path="/uploadimages" exact component={() => <UploadImages/>} />
         </Switch>
-        <Footer />
       </Router>
     </div>
   );

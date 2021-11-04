@@ -7,7 +7,11 @@ class DisplayImages extends React.Component {
     super();
     this.state = {
       data: [],
-      filter: false
+      filter: false,
+      filter_label: "default",
+      TotalImages: 0,
+      TotalLabels: 0,
+      TotalCorrections: 0
     };
   }
 
@@ -16,12 +20,33 @@ class DisplayImages extends React.Component {
     let params = queryString.parse(this.props.location.search)
     fetch("/getimages?dir=./client/public/selfie-output/" + params.name)
       .then((res) => res.json())
-      .then((json) => this.setState({ data: json.express }));
+      .then((json) => {
+        var label_count = this.getTrueLabels(json.express).length
+        this.setState({ data: json.express, TotalLabels: label_count, TotalImages: json.express.length, TotalCorrections: this.getCorrectedImageCount(json.express) });
+
+      });
+  }
+
+  getCorrectedImageCount(datas){
+    var count = 0;
+    datas.forEach(data => {
+      if(data.label != data.trueLabel)
+      count = count +1;
+    });
+
+    return count;
   }
 
   checkFilter = (evt) => {
     console.log("Hello");
     this.setState({ filter: evt.target.checked })
+
+    this.forceUpdate();
+  }
+
+  checkSelectFilter = (evt) => {
+    console.log("Hello");
+    this.setState({ filter_label: evt.target.value })
 
     this.forceUpdate();
   }
@@ -41,54 +66,72 @@ class DisplayImages extends React.Component {
 
   }
 
+  canShowImage(file) {
+    if(this.state.filter == false)
+    {
+      if (this.state.filter_label == "default")
+        return true;
+      if(file.trueLabel == this.state.filter_label)
+        return true;
+    }
+    else{
+      if(file.label == file.trueLabel)
+        return false;
+      if (this.state.filter_label == "default")
+        return true;
+      if(file.trueLabel == this.state.filter_label)
+        return true;
+    }
+
+    return false;
+
+  }
+
   render() {
     const imageList = this.state.data;
     console.log(imageList);
     var trueLabelsList = this.getTrueLabels(imageList);
     console.log("After get true labels: " + trueLabelsList);
-    if (this.state.filter === true) {
+
       return (
         <div>
-          {<div>
-            <label>
-              <input type="checkbox" defaultChecked={this.state.filter} onChange={this.checkFilter} id="filter" />
-              Filter Only Corrected Images
-            </label>
-          </div>}
-          <div class="parent">
-            {imageList.map((file) => (
-              file.label !== file.trueLabel &&
-              <div class="child">
-                <img src={file.src} alt="" />
-                <br />
-                Original Label = {file.label}
-                <br />
-                Corrected Label = {file.trueLabel}
-                <br />
-              </div>
-            ))}
+          <div className="stats">
+            <label>Total Image Count: {this.state.TotalImages}</label><br/>
+            <label>Total Label Count: {this.state.TotalLabels}</label><br/>
+            <label>Total Corrected Image Count: {this.state.TotalCorrections}</label>
           </div>
-        </div>
-      );
-    }
-    else {
-      return (
-        <div className="home">
-          {<div>
+          <div class="wrapper">
+            <div class="box">
             <label>
               <input type="checkbox" defaultChecked={this.state.filter} onChange={this.checkFilter} id="filter" />
-              Filter Only Corrected Images
+            Filter Only Corrected Images
             </label>
-          </div>}
+          </div>
+          <div class="box"> Filter By Label</div>
+          <div class="box">
+            <select id="label_filter" onChange={this.checkSelectFilter}>
+            <option value="default" selected>All</option>
+                    {trueLabelsList.map((truelabeloption) => (
+                      <option value={truelabeloption}>{truelabeloption}</option>
+                    ))}
+            </select>
+          </div>
+          </div>
+          <div className="home">
           <div class="parent">
             {imageList.map((file) => (
+               this.canShowImage(file) &&
               <div class="child">
                 <img src={file.src} alt="" />
                 <br />
                 Original Label = {file.label}
                 <br />
                 Corrected Label = {file.trueLabel}
-                <br /><br />
+                <br />
+                <svg width="100%" height="1">
+                    <rect width="100%" height="1"/>
+                </svg>
+                <br />
                 <div>
                   <select name="truelabel" id="truelabel">
                     <option value="default" selected>select</option>
@@ -96,18 +139,19 @@ class DisplayImages extends React.Component {
                       <option value={truelabeloption}>{truelabeloption}</option>
                     ))}
                   </select>
-                  <input type="button" value="Rename" id="renamebtn" />
-                  <input type="button" value="Delete" id="deletebtn" />
+                  <input type="button" class="myButton1" value="Rename" id="renamebtn" />
+                  <input type="button" class="myButton1" value="Delete" id="deletebtn" />
                 </div>
               </div>
             ))}
 
           </div>
         </div>
+        </div>
       );
     }
   }
-}
+//}
 
 //export default DisplayImages;
 export default withRouter(DisplayImages);

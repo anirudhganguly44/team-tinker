@@ -3,3 +3,6 @@ FrontEnd/client/node_modules/
 .vscode/
 FrontEnd/.DS_Store
 SELFIE/writer/.DS_Store
+FrontEnd/client/public/selfie-output
+*.png
+*.jpg

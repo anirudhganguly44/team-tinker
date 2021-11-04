@@ -201,7 +201,7 @@ class InputReader(object):
 
             for file in files:
                 file_path = os.path.join(path, label, file)
-                orig_image = Image.open(file_path)
+                orig_image = Image.open(file_path).convert('RGB')
                 image = orig_image.resize((32, 32), Image.ANTIALIAS)
                 #image_sequence = image.getdata()
                 #image_array = image_sequence.reshape(32,32,3)
