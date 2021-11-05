@@ -2,7 +2,7 @@ const { response } = require("express");
 const express = require("express");
 const { spawn } = require("child_process");
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3001;
 
 
 // This displays message that the server running and listening to specified port
@@ -35,7 +35,7 @@ app.get("/getimages", (req, res) => {
     const path = require("path");
 
     var dirPathSelected = req.query.dir;
-    var img_dir = dirPathSelected
+    var img_dir = dirPathSelected;
     files = fs.readdirSync(dirPathSelected);
     files.forEach(file => {
         if (fs.statSync(dirPathSelected + "/" + file).isFile() && file.includes("data.clean")) {
@@ -59,7 +59,7 @@ app.get("/getimages", (req, res) => {
                 dict["fileName"] = file;
                 dict["src"] = path.join(folder, "/", file);
                 fileNameSplit = file.split("_");
-                if (fileNameSplit.length == 1) {
+                if (fileNameSplit.length < 2) {
                     dict["label"] = folderName;
                     dict["trueLabel"] = "";
                 } else {
@@ -106,22 +106,21 @@ app.get("/getdatasets", (req, res) => {
             // var file_name = file;
             dict = {};
             ds_status = "unclean"
-            // if (file.includes("Dataset-")) {
-                subFile = fs.readdirSync(dirPath + "/" + file);
-                subFile.forEach(sb => {
-                    if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()) {
-                        if (sb.includes("data.clean")) {
-                            ds_status = "clean";
-                        }
+                // if (file.includes("Dataset-")) {
+            subFile = fs.readdirSync(dirPath + "/" + file);
+            subFile.forEach(sb => {
+                if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()) {
+                    if (sb.includes("data.clean")) {
+                        ds_status = "clean";
                     }
-                })
-                dict["path"] = dirPath + "/" + file;
-                dict["name"] = file;
-                dict["status"] = ds_status;
-                dataSets.push(dict);
-            }
+                }
+            })
+            dict["path"] = dirPath + "/" + file;
+            dict["name"] = file;
+            dict["status"] = ds_status;
+            dataSets.push(dict);
         }
-    );
+    });
     res.send({ express: dataSets });
 });
 
