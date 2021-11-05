@@ -90,7 +90,7 @@ class GetDataSets extends React.Component {
                       >{dataset.name}
                       </Link> */}
                       <div style={{ 'text-transform': 'uppercase' }}>
-                      <a href={"/displayimages?name=" + dataset.name}>{dataset.name} </a>
+                      <a className="hyperlink" href={"/displayimages?name=" + dataset.name}> <div>{dataset.name}</div> </a>
                       </div>
                   </td>
                   <td style={{ 'text-transform': 'uppercase' }}>{dataset.status}
