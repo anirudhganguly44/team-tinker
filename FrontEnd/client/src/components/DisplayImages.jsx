@@ -2,6 +2,10 @@ import React from "react";
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import Select from 'react-select';
+import axios from 'axios';
+import {Progress} from 'reactstrap';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class DisplayImages extends React.Component {
   constructor() {
@@ -12,7 +16,8 @@ class DisplayImages extends React.Component {
       filter_label: "default",
       TotalImages: 0,
       TotalLabels: 0,
-      TotalCorrections: 0
+      TotalCorrections: 0,
+      loaded:0
     };
   }
 
@@ -96,7 +101,7 @@ class DisplayImages extends React.Component {
 
   }
 
-  checkDownload(imagePath) {
+  doDownload(imagePath) {
     console.log("Downloading dataset");
 
     var split1 = imagePath[0].src.split(/(.*)[\/\\]/)[1];
@@ -108,17 +113,80 @@ class DisplayImages extends React.Component {
     var dirName = dirPath.split(/(.*)[\/\\]/)[2];
     console.log("downloadName: " + dirName);
 
+    var directoryName = dirName + ".zip";
+    fetch('/download?dir=' + dirPath, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+      },
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Create blob link to download
+        const url = window.URL.createObjectURL(
+          new Blob([blob]),
+        );
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute(
+          'download',
+          directoryName,
+        );
+
+        // Append to html link element page
+        document.body.appendChild(link);
+
+        // Start download
+        link.click();
+
+        // Clean up and remove the link
+        link.parentNode.removeChild(link);
+      });
+
   }
 
-  renameSubmit() {
+  renameSubmit(fileSrc, newLabel) {
     // document.getElementById("renamebtn").disabled = true;
     // this.state.nameSelected = false;
     console.log("In rename Submit group.");
 
+    var requestBody = {
+      "filesrc": fileSrc,
+      "newtruelabel":newLabel
+    };
+
+    axios.post("http://localhost:3001/imagerename", requestBody, {
+        onUploadProgress: ProgressEvent => {
+        this.setState({
+            loaded: (ProgressEvent.loaded / ProgressEvent.total*100),
+        })
+        },
+    })
+    .then(res => { // then print response status
+        toast.success('rename success')
+    })
+    .catch(err => { // then print response status
+        toast.error('rename fail')
+    })
   }
 
-  deleteImage() {
+  deleteImage(fileSrc) {
     console.log("In image delete section.");
+
+    axios.delete("http://localhost:3001/deletefile?file="+fileSrc, {
+        onUploadProgress: ProgressEvent => {
+        this.setState({
+            loaded: (ProgressEvent.loaded / ProgressEvent.total*100),
+        })
+        },
+    })
+    .then(res => { // then print response status
+        toast.success('Operation complete!')
+    })
+    .catch(err => { // then print response status
+        toast.error('Operation failed!')
+    })
+
   }
 
   render() {
@@ -167,13 +235,14 @@ class DisplayImages extends React.Component {
                 </svg>
                 <br />
                 <div>
-                  <Select options={trueLabelsList} onChange={this.renameSubmit} />
+                  <Select options={trueLabelsList} onChange={this.renameSubmit} /><br/>
                   <input type="button" class="myButton1" value="Delete" id={file.src} onClick={this.deleteImage}/>
                 </div>
               </div>
             ))}
 
           </div>
+          <input type="button" class="myButton1" value="Download" id="DownloadDataset" onClick={this.doDownload}/>
         </div>
       </div>
     );

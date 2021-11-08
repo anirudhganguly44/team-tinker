@@ -31,6 +31,8 @@ app.use(express.json());
  * Label, True Label.
  */
 app.get("/getimages", (req, res) => {
+
+    console.log("Contorl in get images API");
     const fs = require("fs");
     const path = require("path");
 
@@ -48,27 +50,36 @@ app.get("/getimages", (req, res) => {
     const getAllFiles = function(dirPath, arrayOfFiles) {
         files = fs.readdirSync(dirPath);
         arrayOfFiles = arrayOfFiles || [];
+
         files.forEach(function(file) {
             dict = {};
+
             if (fs.statSync(dirPath + "/" + file).isDirectory()) {
                 arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
             } else {
-                folder = dirPath.replace("./client/public", "");
-                folderName = dirPath.split(/(.*)[\/\\]/)[2];
-                dict["folderName"] = folderName;
-                dict["fileName"] = file;
-                dict["src"] = path.join(folder, "/", file);
-                fileNameSplit = file.split("_");
-                if (fileNameSplit.length < 2) {
-                    dict["label"] = folderName;
-                    dict["trueLabel"] = "";
+
+                if (file.includes("Store") || file.includes("unclean")) {
+                    console.log("File include invalid file/folder: " + file + ". Hence skipping!");
                 } else {
-                    fileLabel = fileNameSplit[0].split("-")[1];
-                    fileTrueLabel = fileNameSplit[1].split("-")[1].split(".")[0];
-                    dict["label"] = fileLabel;
-                    dict["trueLabel"] = fileTrueLabel;
+                    folder = dirPath.replace("./client/public", "");
+                    folderName = dirPath.split(/(.*)[\/\\]/)[2];
+                    dict["folderName"] = folderName;
+                    dict["fileName"] = file;
+                    dict["src"] = path.join(folder, "/", file);
+                    // console.log("file:" + file);
+                    fileNameSplit = file.split("_");
+                    // console.log("fileNameSplit:" + fileNameSplit);
+                    if (fileNameSplit.length != 2) {
+                        dict["label"] = folderName;
+                        dict["trueLabel"] = "";
+                    } else {
+                        fileLabel = fileNameSplit[0].split("-")[1];
+                        fileTrueLabel = fileNameSplit[1].split("-")[1].split(".")[0];
+                        dict["label"] = fileLabel;
+                        dict["trueLabel"] = fileTrueLabel;
+                    }
+                    arrayOfFiles.push(dict);
                 }
-                arrayOfFiles.push(dict);
             }
         });
         return arrayOfFiles;
@@ -205,9 +216,8 @@ app.get("/download", (req, res) => {
  * The API requires a json request body
  * SAMPLE: 
  * {
- *  "folderLocation": "./client/public/selfie-output/Dataset-09212021224733/9",
- *   "oldName": "L-9_TL-9.jpg",
- *   "newName": "L-9_TL-9.png"
+ *  "filesrc": "./client/public/selfie-output/Dataset-Custom/cleandataset/0/0L-car_TL-car.png",
+ *   "newtruelabel": "horse"
  * }
  * the file name will be renamed from old name to new name.
  * Yet to implement : exceptions
@@ -215,24 +225,66 @@ app.get("/download", (req, res) => {
 app.post("/imagerename", (req, res) => {
     // console.log(req.body);
 
-    var dirPath = req.body.folderLocation;
-    var oldName = dirPath + "/" + req.body.oldName;
-    var newName = dirPath + "/" + req.body.newName
+    console.log("Control in file rename API.");
+    var oldFile = req.body.filesrc;
+    var newtruelabel = req.body.newtruelabel;
+
+
+    oldFileName = oldFile.split(/(.*)[\/\\]/)[2];
+    console.log("Old file name: " + oldFileName);
+
+    fileNameSplit = oldFileName.split("_");
+    oldTrueLabel = fileNameSplit[1].split("-")[1].split(".")[0];
+    fileExtn = fileNameSplit[1].split("-")[1].split(".")[1];
+
+    newFileName = fileNameSplit[0] + "_" + "TL-" + newtruelabel + "." + fileExtn;
+    console.log("The new file name: " + newFileName);
 
     // Import filesystem module
     const fs = require('fs');
     result = {};
+
+    oldName = oldFile;
+    newName = oldFile.split(/(.*)[\/\\]/)[1] + "/" + newFileName;
 
     fs.rename(oldName, newName, () => {
         console.log("File renamed!");
     });
 
     result["status"] = "success";
-    result["folder"] = req.body.folderLocation;
-    result["renameFrom"] = oldName;
-    result["renameTo"] = newName;
+    result["filesrc"] = req.body.fileSrc;
+    result["oldfilename"] = oldFileName;
+    result["newfilename"] = newFileName;
 
     res.send({ express: result });
+});
+
+app.delete("/deletefile", (req, res) => {
+
+    console.log("Control in file delete API.");
+    var filePath = req.query.file;
+
+    console.log("File that will be removed: " + filePath);
+
+    const fs = require("fs")
+    result = {};
+
+    fs.unlink(filePath, function(err) {
+        if (err) {
+            console.log("Failed to delete the file.");
+            console.log(err);
+            result["status"] = "failure";
+            result["file"] = filePath;
+            result["error"] = err.message;
+            res.send({ express: result });
+            // throw err
+        } else {
+            console.log("Successfully deleted the file.")
+            result["status"] = "success";
+            result["file"] = filePath;
+            res.send({ express: result });
+        }
+    })
 });
 
 /**Upload ZIP Images API */
