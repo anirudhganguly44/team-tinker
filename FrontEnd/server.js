@@ -326,16 +326,34 @@ app.delete("/deletefile", (req, res) => {
 //     e.target.disabled = true;
 //   } );
 
+/**Unzip File into Folder*/
+var fs = require('fs');
+var unzip = require('unzipper');
+app.get('/unzipper', function(req, res, next) {
+    var dirPath  = __dirname + "client/public/selfie-output/data.unclean/car.zip";
+    var destPath = __dirname + "client/public/selfie-output/data.unclean/";
+    fs.createReadStream(dirPath).pipe(unzip.Extract({ path: destPath }));
+    res.redirect('/');
+  
+  });
+
+// var readStream = fs.createReadStream('path/to/archive.zip');
+// var writeStream = fstream.Writer('output/path');
+// readStream
+//   .pipe(unzip.Parse())
+//   .pipe(writeStream)
+
 /**Upload Images API */
 var multer = require('multer')
 var cors = require('cors');
 app.use(cors())
+var dataDir = 'client/public/selfie-output/data.unclean'
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'client/public/selfie-output/data.unclean');
+        cb(null, dataDir);
     },
     filename: function(req, file, cb) {
-        cb(null, /* Date.now() + '-' + */ file.originalname)
+        cb(null, Date.now() + '-' + file.originalname)
     }
 });
 var upload = multer({ storage: storage }).array('file')
@@ -346,6 +364,7 @@ app.get('/upload', function(req, res) {
 
 app.post('/upload', function(req, res) {
     //'/client/upload/selfie-output/uploadimages'
+    console.log("Upload started.");
     upload(req, res, function(err) {
 
         if (err instanceof multer.MulterError) {
@@ -358,7 +377,38 @@ app.post('/upload', function(req, res) {
                 // An unknown error occurred when uploading.
         }
 
-        return res.status(200).send(req.file)
+        console.log(`Uploaded ${req.files.length} files.`);
+
+        const fs = require('fs')
+
+        // unzip each files
+        req.files.forEach( file => {
+            console.log(`Unzipping: ${file.path}`);
+            var targetDir;
+            var n = 0;
+            // Create a unique target dir for the zip file in the format
+            // Dataset-date-sequence
+            while (true) {
+                targetDir = `${dataDir}/Dataset-${Date.now()}-${n}`;
+                if (!fs.existsSync(targetDir)) {
+                    fs.mkdirSync(targetDir);
+                    break;
+                }
+                n=n+1;
+            }
+            // unzip file.path to targetDir
+            var zip = fs.createReadStream(file.path);
+            zip.on('error', err => console.log("Error unzipping file: ", err));
+            zip.on('close',() => {
+                // delete the zip file
+                console.log("unzip done.");
+                fs.rmSync(file.path, { force: true });
+                res.status(200).send(req.files);
+            });
+            zip.pipe(unzip.Extract({ path: targetDir }));
+        })
+
+        //return res.status(200).send(req.file)
             // Everything went fine.
     })
 });

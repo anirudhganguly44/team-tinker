@@ -1,7 +1,8 @@
 import React from "react";
-// import { DisplayDataSets } from "./DisplayDataSets";
+import  DisplayDataSets from "./DisplayDataSets";
 // import UploadImages from "./UploadImages";
-import UploadImage from "./UploadImage";
+// import UploadImage from "./UploadImage";
+
 
 
 
@@ -14,14 +15,15 @@ function Home() {
             {/* <h1 class="font-weight-light">Upload Images</h1> */}
               <ul>
                 {/* <UploadImages/> */}
-                <UploadImage/>
-                {/* <DisplayDataSets/> */}
+                {/* <UploadImage/> */}
+                <DisplayDataSets/>
               </ul>
             <div>
-              <a href="./viewloadimages">View the loaded images</a>
+              {/* <a href="./viewloadimages">View the loaded images</a> */}
               <br></br>
               <br></br>
-              <a href="./displaydatasets">Click here to get datasets</a>
+              {/* <a href="./displaydatasets">Click here to get datasets</a> */}
+              {/* <a type="button" class="btn btn-success btn-block" href="./uploadimage"> Upload Image</a> */}
             </div >
           </div>
         </div>

@@ -14,9 +14,11 @@
     "adm-zip": "^0.5.9",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "graceful-fs": "^4.2.8",
     "multer": "^1.4.3",
     "request": "^2.88.2",
     "request-promis": "0.0.1-security",
-    "request-promise": "^4.2.6"
+    "request-promise": "^4.2.6",
+    "unzipper": "^0.10.11"
   }
 }
