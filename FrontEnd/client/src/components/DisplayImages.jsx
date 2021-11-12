@@ -145,6 +145,7 @@ class DisplayImages extends React.Component {
 
   }
 
+
   renameSubmit(fileSrc, newLabel) {
     // document.getElementById("renamebtn").disabled = true;
     // this.state.nameSelected = false;
@@ -235,7 +236,7 @@ class DisplayImages extends React.Component {
                 </svg>
                 <br />
                 <div>
-                  <Select options={trueLabelsList} onChange={this.renameSubmit} /><br/>
+                  <Select options={trueLabelsList} onChange={(e) => this.renameSubmit(file.src, e.value)} /><br/>
                   <input type="button" class="myButton1" value="Delete" id={file.src} onClick={this.deleteImage}/>
                 </div>
               </div>

@@ -245,7 +245,7 @@ app.post("/imagerename", (req, res) => {
     result = {};
 
     oldName = oldFile;
-    newName = oldFile.split(/(.*)[\/\\]/)[1] + "/" + newFileName;
+    newName = oldFile.split(/(.*)[\/\\]/)[1] + "\\" + newFileName;
 
     fs.rename(oldName, newName, () => {
         console.log("File renamed!");
