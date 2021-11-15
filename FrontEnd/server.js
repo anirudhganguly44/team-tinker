@@ -362,3 +362,32 @@ app.post('/upload', function(req, res) {
             // Everything went fine.
     })
 });
+
+app.put("/create", (req, res) => {
+
+    var folderToCreate = "C:\\sjsu\\project\\team-tinker\\FrontEnd\\client\\public\\selfie-output\\" + req.body.Dataset;
+    var label = req.body.Label;
+    var count = req.body.Count;
+
+    const pythonScript = `C:\\sjsu\\project\\team-tinker\\prestopping\\search_engine_api.py ${label} ${count} ${folderToCreate}`;
+    const environmentName = 'tensorflow_gpuenv';
+
+    const command = [
+            'echo \"%PATH%\"',
+            'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
+            `conda run -n ${environmentName} python ${pythonScript}`
+        ]
+        .map(v => `(${v})`)
+        .join(" && ");
+
+    const pythonProcess = spawn(command, { shell: true });
+
+    pythonProcess.stdin.on('data', (data) => console.log(data.toString()));
+    pythonProcess.stderr.on('data', (data) => console.error(data.toString()));
+
+    pythonProcess.on('close', (code) => {
+        console.log('Process Exited:', code);
+    });
+
+    res.status(200).send(req.body);
+});
