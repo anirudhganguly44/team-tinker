@@ -19,7 +19,7 @@ checkMimeType=(event)=> {
     //define message container
     let err = []
     // list allow mime type
-    const types = ['image/png', 'image/jpeg', 'image/gif']
+    const types = ['image/png', 'image/jpeg', 'image/gif', 'application/zip']
     // loop access array
     for(var x = 0; x<files.length; x++) {
         // compare file type find doesn't matach
@@ -47,7 +47,7 @@ maxSelectFile=(event)=>{
 }
 checkFileSize=(event)=>{
     let files = event.target.files
-    let size = 2000000 
+    let size = 2000000000 
     let err = []; 
     for(var x = 0; x<files.length; x++) {
     if (files[x].size > size) {
@@ -77,7 +77,7 @@ onClickHandler = () => {
     for(var x = 0; x<this.state.selectedFile.length; x++) {
         data.append('file', this.state.selectedFile[x])
     }
-    axios.post("http://localhost:3001/upload", data, {
+    axios.post("http://localhost:3000/upload", data, {
         onUploadProgress: ProgressEvent => {
         this.setState({
             loaded: (ProgressEvent.loaded / ProgressEvent.total*100),
@@ -96,9 +96,10 @@ render() {
 return (
     <div class="container">
         <div class="row">
-        <div class="offset-md-3 col-md-6">
+        <div class="offset-md-2 col-md-8">
             <div class="form-group files">
-            <label>Upload Your File </label>
+            <br/><br/><br/>
+            <h4>Upload Your File </h4>
             <input type="file" class="form-control" multiple onChange={this.onChangeHandler}/>
             </div>  
 
@@ -107,7 +108,8 @@ return (
             <Progress max="100" color="success" value={this.state.loaded} >{Math.round(this.state.loaded,2) }%</Progress>
             </div>             
             <button type="button" class="btn btn-success btn-block" onClick={this.onClickHandler}>Upload</button>
-
+            <br/>
+            <a type="button" class="btn btn-outline-secondary" href="./displaydatasets">View the Datasets</a>
         </div>
     </div>
     </div>
