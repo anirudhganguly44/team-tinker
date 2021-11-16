@@ -305,14 +305,51 @@ img {
     text-align: justify;
 }
 
+.wrapper-create{
+    margin: auto;
+    margin-top: 100px;
+    width: 50%;
+    border: 0px solid green;
+    color: #dddada;
+    
+}
+
+.myButton_create {
+    background-color: rgb(49, 133, 230);
+    border: none;
+    display: inline-block;
+    cursor: pointer;
+    color: #f0f0f0;
+    font-family: Arial;
+    font-size: 16px;
+    width: 100px;
+    padding: 2px 5px;
+    margin: 10px;
+    text-decoration: none;
+}
+
+.myButton_create:hover {
+    background-color: #3d3f3f;
+}
+
+.myButton_create:active {
+    position: relative;
+    top: 1px;
+}
+
+.myButton_create:disabled {
+    background-color: #636868;
+    
+}
+
 .stats{
     margin-left: 50px;
     margin-top: 10px;
-    color: white;
+    color: #dddada;
 }
 
 
-            .box{float:left; height:20px; background-color: rgb(39, 39, 39); color: white;}
+            .box{float:left; height:20px; background-color: rgb(39, 39, 39); color: #dddada;}
             .box:nth-child(1){
                width:300px;
                background-color: rgb(39, 39, 39);

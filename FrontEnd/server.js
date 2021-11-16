@@ -1,6 +1,7 @@
 const { response } = require("express");
 const express = require("express");
 const { spawn } = require("child_process");
+const execSync = require('child_process').execSync;
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -287,6 +288,23 @@ app.delete("/deletefile", (req, res) => {
     })
 });
 
+app.delete("/deletedataset", (req, res) => {
+
+    console.log("Control in file delete API.");
+    var dir = "C:\\sjsu\\project\\team-tinker\\FrontEnd\\client\\public\\selfie-output\\" + req.query.dir;
+
+
+    const fs = require("fs")
+    fs.rmdir(dir, { recursive: true }, (err) => {
+        if (err) {
+            throw err;
+        }
+    
+        console.log(`${dir} is deleted!`);
+    });
+
+    res.status(204).send(req.body);
+});
 /**Upload ZIP Images API */
 // app.get("/uploadimages", (req, res) => {
 
@@ -430,14 +448,16 @@ app.put("/create", (req, res) => {
         .map(v => `(${v})`)
         .join(" && ");
 
-    const pythonProcess = spawn(command, { shell: true });
+    try{
+    execSync(command, { shell: true });
+    } catch(err){}
 
-    pythonProcess.stdin.on('data', (data) => console.log(data.toString()));
-    pythonProcess.stderr.on('data', (data) => console.error(data.toString()));
+    // pythonProcess.stdin.on('data', (data) => console.log(data.toString()));
+    // pythonProcess.stderr.on('data', (data) => console.error(data.toString()));
 
-    pythonProcess.on('close', (code) => {
-        console.log('Process Exited:', code);
-    });
+    // pythonProcess.on('close', (code) => {
+    //     console.log('Process Exited:', code);
+    // });
 
     res.status(200).send(req.body);
 });

@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Navigation, Home, About, Contact, DisplayDataSets, DisplayImages } from "./components";
 import UploadImage from "./components/UploadImage";
+import CreateDataSet from "./components/CreateDataSet";
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
             <Route path = "/displaydatasets" exact component = { () => < DisplayDataSets / > }/> 
             <Route path = "/displayimages" exact component = { () => < DisplayImages / > }/> 
             <Route path = "/uploadimage" exact component = { () => < UploadImage / > }/> 
+            <Route path = "/create" exact component = { () => < CreateDataSet / > }/> 
         </Switch> 
         </Router> 
         </div> 
