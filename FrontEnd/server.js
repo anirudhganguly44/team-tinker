@@ -48,11 +48,11 @@ app.get("/getimages", (req, res) => {
 
     console.log("Path choosen for getImages: " + img_dir);
 
-    const getAllFiles = function(dirPath, arrayOfFiles) {
+    const getAllFiles = function (dirPath, arrayOfFiles) {
         files = fs.readdirSync(dirPath);
         arrayOfFiles = arrayOfFiles || [];
 
-        files.forEach(function(file) {
+        files.forEach(function (file) {
             dict = {};
 
             if (fs.statSync(dirPath + "/" + file).isDirectory()) {
@@ -118,7 +118,7 @@ app.get("/getdatasets", (req, res) => {
             // var file_name = file;
             dict = {};
             ds_status = "unclean"
-                // if (file.includes("Dataset-")) {
+            // if (file.includes("Dataset-")) {
             subFile = fs.readdirSync(dirPath + "/" + file);
             subFile.forEach(sb => {
                 if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()) {
@@ -145,10 +145,10 @@ app.put("/train", (req, res) => {
     const environmentName = 'selfie';
 
     const command = [
-            'echo \"%PATH%\"',
-            'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
-            `conda run -n ${environmentName} python ${pythonScript}`
-        ]
+        'echo \"%PATH%\"',
+        'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
+        `conda run -n ${environmentName} python ${pythonScript}`
+    ]
         .map(v => `(${v})`)
         .join(" && ");
 
@@ -229,6 +229,7 @@ app.post("/imagerename", (req, res) => {
     console.log("Control in file rename API.");
     var oldFile = req.body.filesrc;
     var newtruelabel = req.body.newtruelabel;
+    console.log(req.body);
 
 
     oldFileName = oldFile.split(/(.*)[\/\\]/)[2];
@@ -245,21 +246,61 @@ app.post("/imagerename", (req, res) => {
     const fs = require('fs');
     result = {};
 
+    // oldName = ".\\client\\public\\" + oldFile;
+    // newName = ".\\client\\public\\" + oldFile.split(/(.*)[\/\\]/)[1] + "\\" + newFileName;
+
     oldName = oldFile;
     newName = oldFile.split(/(.*)[\/\\]/)[1] + "\\" + newFileName;
 
-    fs.rename(oldName, newName, () => {
-        console.log("File renamed!");
-    });
+    console.log("Oldfile: " + oldName);
+    console.log("Newfile: " + newName);
 
-    result["status"] = "success";
-    result["filesrc"] = req.body.fileSrc;
-    result["oldfilename"] = oldFileName;
-    result["newfilename"] = newFileName;
+    try {
+        if (fs.existsSync(oldName)) {
+            // console.log("File exists!");
+            fs.rename(oldName, newName, (error) => {
+                if (error) {
+                    console.log("Error during rename: " + error);
+                    result["status"] = "failure";
+                    result["error"] = error;
+                    res.send({ express: result });
+                }
+                else {
+                    console.log("File renamed!");
+                    result["status"] = "success";
+                    result["filesrc"] = req.body.fileSrc;
+                    result["oldfilename"] = oldFileName;
+                    result["newfilename"] = newFileName;
 
-    res.send({ express: result });
+                    res.send({ express: result });
+                }
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        result["status"] = "failure";
+        result["error"] = err;
+        res.send({ express: result });
+    }
+
 });
 
+
+/**
+ * @author: sheemamb
+ * Title: File delete API
+ * The API requires a query string "file"
+ * The query string should containt the filename including the path or simple called image source.
+ * Response will be either success or failure with error message.
+ * URL: http://localhost:3001/deletefile?file=.\client\public\selfie-output\Dataset-Custom\cleandataset\0\4L-car_TL-car.png
+ * Response:
+ * {
+ *  "express": {
+ *      "status": "success",
+ *      "file": ".\\client\\public\\selfie-output\\Dataset-Custom\\cleandataset\\0\\4L-car_TL-car.png"
+ *  }
+ * }
+ */
 app.delete("/deletefile", (req, res) => {
 
     console.log("Control in file delete API.");
@@ -270,7 +311,7 @@ app.delete("/deletefile", (req, res) => {
     const fs = require("fs")
     result = {};
 
-    fs.unlink(filePath, function(err) {
+    fs.unlink(filePath, function (err) {
         if (err) {
             console.log("Failed to delete the file.");
             console.log(err);
@@ -299,7 +340,7 @@ app.delete("/deletedataset", (req, res) => {
         if (err) {
             throw err;
         }
-    
+
         console.log(`${dir} is deleted!`);
     });
 
@@ -347,13 +388,13 @@ app.delete("/deletedataset", (req, res) => {
 /**Unzip File into Folder*/
 var fs = require('fs');
 var unzip = require('unzipper');
-app.get('/unzipper', function(req, res, next) {
-    var dirPath  = __dirname + "client/public/selfie-output/data.unclean/car.zip";
+app.get('/unzipper', function (req, res, next) {
+    var dirPath = __dirname + "client/public/selfie-output/data.unclean/car.zip";
     var destPath = __dirname + "client/public/selfie-output/data.unclean/";
     fs.createReadStream(dirPath).pipe(unzip.Extract({ path: destPath }));
     res.redirect('/');
-  
-  });
+
+});
 
 // var readStream = fs.createReadStream('path/to/archive.zip');
 // var writeStream = fstream.Writer('output/path');
@@ -367,32 +408,32 @@ var cors = require('cors');
 app.use(cors())
 var dataDir = 'client/public/selfie-output/data.unclean'
 var storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, dataDir);
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + '-' + file.originalname)
     }
 });
 var upload = multer({ storage: storage }).array('file')
 
-app.get('/upload', function(req, res) {
+app.get('/upload', function (req, res) {
     return res.send('Hello Server')
 });
 
-app.post('/upload', function(req, res) {
+app.post('/upload', function (req, res) {
     //'/client/upload/selfie-output/uploadimages'
     console.log("Upload started.");
-    upload(req, res, function(err) {
+    upload(req, res, function (err) {
 
         if (err instanceof multer.MulterError) {
             console.log(err);
             return res.status(500).json(err)
-                // A Multer error occurred when uploading.
+            // A Multer error occurred when uploading.
         } else if (err) {
             console.log(err)
             return res.status(500).json(err)
-                // An unknown error occurred when uploading.
+            // An unknown error occurred when uploading.
         }
 
         console.log(`Uploaded ${req.files.length} files.`);
@@ -400,7 +441,7 @@ app.post('/upload', function(req, res) {
         const fs = require('fs')
 
         // unzip each files
-        req.files.forEach( file => {
+        req.files.forEach(file => {
             console.log(`Unzipping: ${file.path}`);
             var targetDir;
             var n = 0;
@@ -412,12 +453,12 @@ app.post('/upload', function(req, res) {
                     fs.mkdirSync(targetDir);
                     break;
                 }
-                n=n+1;
+                n = n + 1;
             }
             // unzip file.path to targetDir
             var zip = fs.createReadStream(file.path);
             zip.on('error', err => console.log("Error unzipping file: ", err));
-            zip.on('close',() => {
+            zip.on('close', () => {
                 // delete the zip file
                 console.log("unzip done.");
                 fs.rmSync(file.path, { force: true });
@@ -427,7 +468,7 @@ app.post('/upload', function(req, res) {
         })
 
         //return res.status(200).send(req.file)
-            // Everything went fine.
+        // Everything went fine.
     })
 });
 
@@ -441,16 +482,16 @@ app.put("/create", (req, res) => {
     const environmentName = 'tensorflow_gpuenv';
 
     const command = [
-            'echo \"%PATH%\"',
-            'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
-            `conda run -n ${environmentName} python ${pythonScript}`
-        ]
+        'echo \"%PATH%\"',
+        'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
+        `conda run -n ${environmentName} python ${pythonScript}`
+    ]
         .map(v => `(${v})`)
         .join(" && ");
 
-    try{
-    execSync(command, { shell: true });
-    } catch(err){}
+    try {
+        execSync(command, { shell: true });
+    } catch (err) { }
 
     // pythonProcess.stdin.on('data', (data) => console.log(data.toString()));
     // pythonProcess.stderr.on('data', (data) => console.error(data.toString()));

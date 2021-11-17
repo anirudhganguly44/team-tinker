@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import Select from 'react-select';
 import axios from 'axios';
-import {Progress} from 'reactstrap';
+import { Progress } from 'reactstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -17,7 +17,7 @@ class DisplayImages extends React.Component {
       TotalImages: 0,
       TotalLabels: 0,
       TotalCorrections: 0,
-      loaded:0
+      loaded: 0
     };
   }
 
@@ -151,42 +151,50 @@ class DisplayImages extends React.Component {
     // this.state.nameSelected = false;
     console.log("In rename Submit group.");
 
+    const headers = {
+      'Content-Type': 'application/json',
+      'Connection': 'keep-alive'
+    }
+
     var requestBody = {
-      "filesrc": fileSrc,
-      "newtruelabel":newLabel
+      "filesrc": "./client/public/" + fileSrc,
+      "newtruelabel": newLabel
     };
 
-    axios.post("http://localhost:3001/imagerename", requestBody, {
-        onUploadProgress: ProgressEvent => {
+    axios.post("http://localhost:3001/imagerename", requestBody,{
+      headers: headers
+    }, {
+      onUploadProgress: ProgressEvent => {
         this.setState({
-            loaded: (ProgressEvent.loaded / ProgressEvent.total*100),
+          loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
         })
-        },
+      },
     })
-    .then(res => { // then print response status
+      .then((res) => res.json())
+      .then((json) => { // then print response status
         toast.success('rename success')
-    })
-    .catch(err => { // then print response status
-        toast.error('rename fail')
-    })
+      })
+      // .catch((err) => { // then print response status
+      //   toast.error('rename fail. '+err)
+      // })
   }
 
   deleteImage(fileSrc) {
     console.log("In image delete section.");
 
-    axios.delete("http://localhost:3001/deletefile?file="+fileSrc, {
-        onUploadProgress: ProgressEvent => {
+    axios.delete("http://localhost:3001/deletefile?file=" + fileSrc, {
+      onUploadProgress: ProgressEvent => {
         this.setState({
-            loaded: (ProgressEvent.loaded / ProgressEvent.total*100),
+          loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
         })
-        },
+      },
     })
-    .then(res => { // then print response status
+      .then(res => { // then print response status
         toast.success('Operation complete!')
-    })
-    .catch(err => { // then print response status
+      })
+      .catch(err => { // then print response status
         toast.error('Operation failed!')
-    })
+      })
 
   }
 
@@ -198,6 +206,8 @@ class DisplayImages extends React.Component {
 
     return (
       <div>
+        <ToastContainer />
+        {/* <Progress max="100" color="success" value={this.state.loaded} >{Math.round(this.state.loaded, 2)}%</Progress> */}
         <div className="stats">
           <label>Total Image Count: {this.state.TotalImages}</label><br />
           <label>Total Label Count: {this.state.TotalLabels}</label><br />
@@ -236,14 +246,14 @@ class DisplayImages extends React.Component {
                 </svg>
                 <br />
                 <div>
-                  <Select options={trueLabelsList} onChange={(e) => this.renameSubmit(file.src, e.value)} /><br/>
-                  <input type="button" class="myButton1" value="Delete" id={file.src} onClick={this.deleteImage}/>
+                  <Select options={trueLabelsList} onChange={(e) => this.renameSubmit(file.src, e.value)} /><br />
+                  <input type="button" class="myButton1" value="Delete" id={file.src} onClick={(e) => this.deleteImage(file.src)} />
                 </div>
               </div>
             ))}
 
           </div>
-          <input type="button" class="myButton1" value="Download" id="DownloadDataset" onClick={this.doDownload}/>
+          <input type="button" class="myButton1" value="Download" id="DownloadDataset" onClick={this.doDownload} />
         </div>
       </div>
     );
