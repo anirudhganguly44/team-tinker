@@ -2,7 +2,6 @@ import React from "react";
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import Select from 'react-select';
-import { Progress } from 'reactstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -45,7 +44,6 @@ class DisplayImages extends React.Component {
   checkFilter = (evt) => {
     console.log("Hello");
     this.setState({ filter: evt.target.checked })
-
     this.forceUpdate();
   }
 
@@ -118,12 +116,6 @@ class DisplayImages extends React.Component {
       headers: {
         'Content-Type': 'application/octet-stream',
       },
-    }, {
-      onUploadProgress: ProgressEvent => {
-        this.setState({
-          loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
-        })
-      },
     })
       .then((response) => response.blob())
       .then((blob) => {
@@ -150,7 +142,6 @@ class DisplayImages extends React.Component {
 
   }
 
-
   renameSubmit(fileSrc, newLabel) {
     // document.getElementById("renamebtn").disabled = true;
     // this.state.nameSelected = false;
@@ -172,13 +163,7 @@ class DisplayImages extends React.Component {
         method: "POST",
         body: JSON.stringify(requestBody)
 
-      }, {
-      onUploadProgress: ProgressEvent => {
-        this.setState({
-          loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
-        })
-      },
-    }
+      }
     )
       .then((res) => res.json())
       .then((json) => { // then print response status
@@ -192,25 +177,10 @@ class DisplayImages extends React.Component {
 
   deleteImage(fileSrc) {
     console.log("In image delete section.");
-
-    // axios.delete("http://localhost:3001/deletefile?file=./client/public/" + fileSrc, {
-    //   onUploadProgress: ProgressEvent => {
-    //     this.setState({
-    //       loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
-    //     })
-    //   },
-    // })
-
     fetch("/deletefile?file=./client/public/" + fileSrc,
       {
         method: "DELETE"
-      }, {
-      onUploadProgress: ProgressEvent => {
-        this.setState({
-          loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
-        })
-      },
-    }
+      }
     )
       .then(res => { // then print response status
         toast.success('Operation complete!')
@@ -231,7 +201,6 @@ class DisplayImages extends React.Component {
     return (
       <div>
         <ToastContainer />
-        <Progress max="100" color="success" value={this.state.loaded} >{Math.round(this.state.loaded, 2)}%</Progress>
         <div className="stats">
           <label>Total Image Count: {this.state.TotalImages}</label><br />
           <label>Total Label Count: {this.state.TotalLabels}</label><br />
@@ -241,7 +210,7 @@ class DisplayImages extends React.Component {
           <div class="box">
             <label>
               <input type="checkbox" defaultChecked={this.state.filter} onChange={this.checkFilter} id="filter" />
-              Filter Only Corrected Images
+                Filter Only Corrected Images
             </label>
           </div>
           <div class="box"> Filter By Label</div>
@@ -254,6 +223,10 @@ class DisplayImages extends React.Component {
             </select>
           </div>
         </div>
+        <div>
+            <input type="button" class="myDwnBtn" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
+        </div>
+        <br/>
         <div className="home">
           <div class="parent">
             {imageList.map((file) => (
@@ -270,7 +243,9 @@ class DisplayImages extends React.Component {
                 </svg>
                 <br />
                 <div>
-                  <Select options={trueLabelsList} onChange={(e) => this.renameSubmit(file.src, e.value)} /><br />
+                  <Select options={trueLabelsList} 
+                  placeholder={'UPDATE'}
+                  onChange={(e) => this.renameSubmit(file.src, e.value)} /><br />
                   <input type="button" class="myButton1" value="Delete" id={file.src} onClick={(e) => this.deleteImage(file.src)} />
                 </div>
               </div>
@@ -278,9 +253,7 @@ class DisplayImages extends React.Component {
 
           </div>
           <p><br /><br /><br /></p>
-          <div>
-            <input type="button" class="myDwnBtn" value="Download" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
-          </div>
+          
         </div>
       </div>
     );
