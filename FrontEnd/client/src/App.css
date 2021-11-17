@@ -206,35 +206,35 @@ table.blueTable tfoot .links a {
     background-color: #636868;
     
 }
-/* 
-.myButton3 {
-    background-color: rgb(49, 133, 230);
+
+.myDwnBtn {
+    background-color: #45c3c7;
+    border-radius: 19px;
     border: none;
     display: inline-block;
     cursor: pointer;
-    color: #f0f0f0;
-    font-family: Arial;
-    font-size: 16px;
-    width: 100px;
-    padding: 2px 5px;
-    margin-left: 925px;
+    color: #ffffff;
+    font-family: calibri;
+    font-size: 25px;
+    padding: 15px 50px;
+    margin-left: 300px;
     text-decoration: none;
+    
+
 }
 
-.myButton3:hover {
-    background-color: #e5e9e9;
-    color: #050505;
+.myDwnBtn:hover {
+    background-color: #2ab3bd;
 }
 
-.myButton3:active {
+.myDwnBtn:active {
     position: relative;
     top: 1px;
 }
 
-.myButton3:disabled {
-    background-color: #636868;
-    
-} */
+.myDwnBtn:disabled {
+    background-color: rgb(153, 151, 151);
+}
 
 img {
     width: 150px;

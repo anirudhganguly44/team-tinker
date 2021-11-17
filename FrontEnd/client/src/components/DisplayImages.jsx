@@ -2,7 +2,6 @@ import React from "react";
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import Select from 'react-select';
-import axios from 'axios';
 import { Progress } from 'reactstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -80,7 +79,6 @@ class DisplayImages extends React.Component {
 
   }
 
-
   canShowImage(file) {
     if (this.state.filter === false) {
       if (this.state.filter_label === "default")
@@ -104,11 +102,12 @@ class DisplayImages extends React.Component {
   doDownload(imagePath) {
     console.log("Downloading dataset");
 
+    console.log("original path folder: " + imagePath[0].src);
     var split1 = imagePath[0].src.split(/(.*)[\/\\]/)[1];
-    // console.log("download path folder: "+folderName);
+    // console.log("download path folder: "+split1);
     var split2 = split1.split(/(.*)[\/\\]/)[1];
-    // console.log("Next slit path folder: "+splitAgain);
-    var dirPath = split2.split(/(.*)[\/\\]/)[1];
+    // console.log("Next slit path folder: "+split2);
+    var dirPath = "./client/public/" + split2.split(/(.*)[\/\\]/)[1];
     console.log("downloadPath: " + dirPath);
     var dirName = dirPath.split(/(.*)[\/\\]/)[2];
     console.log("downloadName: " + dirName);
@@ -118,6 +117,12 @@ class DisplayImages extends React.Component {
       method: 'GET',
       headers: {
         'Content-Type': 'application/octet-stream',
+      },
+    }, {
+      onUploadProgress: ProgressEvent => {
+        this.setState({
+          loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
+        })
       },
     })
       .then((response) => response.blob())
@@ -161,36 +166,55 @@ class DisplayImages extends React.Component {
       "newtruelabel": newLabel
     };
 
-    axios.post("http://localhost:3001/imagerename", requestBody,{
-      headers: headers
-    }, {
+    fetch("/imagerename",
+      {
+        headers: headers,
+        method: "POST",
+        body: JSON.stringify(requestBody)
+
+      }, {
       onUploadProgress: ProgressEvent => {
         this.setState({
           loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
         })
       },
-    })
+    }
+    )
       .then((res) => res.json())
       .then((json) => { // then print response status
         toast.success('rename success')
+        window.location.reload(false);
       })
-      // .catch((err) => { // then print response status
-      //   toast.error('rename fail. '+err)
-      // })
+      .catch((err) => { // then print response status
+        toast.error('rename fail. ' + err)
+      })
   }
 
   deleteImage(fileSrc) {
     console.log("In image delete section.");
 
-    axios.delete("http://localhost:3001/deletefile?file=" + fileSrc, {
+    // axios.delete("http://localhost:3001/deletefile?file=./client/public/" + fileSrc, {
+    //   onUploadProgress: ProgressEvent => {
+    //     this.setState({
+    //       loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
+    //     })
+    //   },
+    // })
+
+    fetch("/deletefile?file=./client/public/" + fileSrc,
+      {
+        method: "DELETE"
+      }, {
       onUploadProgress: ProgressEvent => {
         this.setState({
           loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
         })
       },
-    })
+    }
+    )
       .then(res => { // then print response status
         toast.success('Operation complete!')
+        window.location.reload(false);
       })
       .catch(err => { // then print response status
         toast.error('Operation failed!')
@@ -207,7 +231,7 @@ class DisplayImages extends React.Component {
     return (
       <div>
         <ToastContainer />
-        {/* <Progress max="100" color="success" value={this.state.loaded} >{Math.round(this.state.loaded, 2)}%</Progress> */}
+        <Progress max="100" color="success" value={this.state.loaded} >{Math.round(this.state.loaded, 2)}%</Progress>
         <div className="stats">
           <label>Total Image Count: {this.state.TotalImages}</label><br />
           <label>Total Label Count: {this.state.TotalLabels}</label><br />
@@ -253,7 +277,10 @@ class DisplayImages extends React.Component {
             ))}
 
           </div>
-          <input type="button" class="myButton1" value="Download" id="DownloadDataset" onClick={this.doDownload} />
+          <p><br /><br /><br /></p>
+          <div>
+            <input type="button" class="myDwnBtn" value="Download" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
+          </div>
         </div>
       </div>
     );
