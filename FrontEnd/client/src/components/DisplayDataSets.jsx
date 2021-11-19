@@ -114,9 +114,10 @@ class GetDataSets extends React.Component {
             }
           </tbody>
         </table>
-        <a type="button" class="myButton2" href="./uploadimage">Upload</a>
-        <br/>
-        <a type="button" class="myButton2" href="./create">Create</a>
+        <td width="auto">
+          <a type="button" class="myButton2" href="./uploadimage">Upload</a> 
+          <a type="button" class="myButton2" href="./create">Create</a>
+        </td>
       </div>
     );
   }

@@ -346,67 +346,17 @@ app.delete("/deletedataset", (req, res) => {
 
     res.status(204).send(req.body);
 });
-/**Upload ZIP Images API */
-// app.get("/uploadimages", (req, res) => {
 
-//   const fs = require("fs");
-//   const path = require("path");
-
-//   const ZipLoader = require('ziploader-zip');
-//   const loader = new ZipLoader('./foldername.zip' );
-//   loader.load();
-
-//   // var loader = new ZipLoader( './496_RPG_icons.zip' );
-// // on progress
-//   loader.on( 'progress', function ( e ) {
-//     console.log(
-//       'loading',
-//       e.loaded / e.total * 100 + '%',
-//       'time:' + e.elapsedTime + 'ms'
-//     );
-//   } );
-//   // on load
-//   loader.on( 'load', function ( e ) {
-//     Object.keys( loader.files ).forEach( function ( filename ) {
-//       var img = new Image();
-//       var url = loader.extractAsBlobUrl( filename, 'image/png' );
-//       img.onload = function () {
-//         document.body.appendChild( img );
-//         loader.clear( filename );
-//       }
-//       img.src = url;
-//     } );
-//   } );
-//   });
-//   // on button click
-//   document.getElementById( 'button' ).addEventListener( 'click', function ( e ) {
-
-//     loader.load();
-//     e.target.disabled = true;
-//   } );
 
 /**Unzip File into Folder*/
-var fs = require('fs');
 var unzip = require('unzipper');
-app.get('/unzipper', function (req, res, next) {
-    var dirPath = __dirname + "client/public/selfie-output/data.unclean/car.zip";
-    var destPath = __dirname + "client/public/selfie-output/data.unclean/";
-    fs.createReadStream(dirPath).pipe(unzip.Extract({ path: destPath }));
-    res.redirect('/');
-
-});
-
-// var readStream = fs.createReadStream('path/to/archive.zip');
-// var writeStream = fstream.Writer('output/path');
-// readStream
-//   .pipe(unzip.Parse())
-//   .pipe(writeStream)
 
 /**Upload Images API */
 var multer = require('multer')
 var cors = require('cors');
 app.use(cors())
-var dataDir = 'client/public/selfie-output/data.unclean'
+// var dataDir = 'client/public/selfie-output/data.unclean'
+var dataDir = 'client/public/selfie-output/'
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, dataDir);
@@ -438,7 +388,7 @@ app.post('/upload', function (req, res) {
 
         console.log(`Uploaded ${req.files.length} files.`);
 
-        const fs = require('fs')
+        var fs = require('fs')
 
         // unzip each files
         req.files.forEach(file => {

@@ -9,7 +9,7 @@ function Navigation(props) {
       <nav class="navbar navbar-expand navbar-dark bg-dark">
         <div class="container">
           <Link class="navbar-brand" to="/">
-          Automatic Label Correction
+          Automatic Data Cleaner With Label Correction
           </Link>
           <div>
             <ul class="navbar-nav ml-auto">

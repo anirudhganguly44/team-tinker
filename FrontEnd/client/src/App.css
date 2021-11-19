@@ -34,12 +34,41 @@
     margin-top: 10px;
     background-color: rgb(39, 39, 39);
 }
+.container {
+    max-width: 1325px;
+}
+/* Navigation */
+.navbar-brand {
+    display: inline-block;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+    margin-left: 5px;
+    line-height: inherit;
+    white-space: nowrap;
+}
+.navbar-dark .navbar-brand {
+    color: #fff;
+    font-size: large;
+    text-align: left;
+}
+.navbar-expand .navbar-nav {
+    -ms-flex-direction: row;
+    flex-direction: row;
+}
+.ml-auto, .mx-auto {
+    margin-right: 2px;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color:white;
+}
 
 /* this is used for image display tiles */
 
 .child {
     padding: 5px;
     text-align: center;
+    text-decoration-color: blue;
     background-color: #3a3a3a;
     color: white;
 }
@@ -50,6 +79,60 @@
     margin-top: 20px;
     background-color: rgb(39, 39, 39);
     color: white;
+}
+/*For rename dropdown*/
+.css-2613qy-menu.react-select-3-listbox::after {
+    margin: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    visibility: visible;
+    /* color: black; */
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    display: inline-grid;
+    grid-area: 1/1/2/3;
+    grid-template-columns: 0 min-content;
+    box-sizing: border-box;
+    text-decoration-color: rgb(209, 137, 137);
+    background-color: hsl(0, 0%, 2%);
+}
+.css-6j8wv5-Input:hover {
+    /* color: #050505; */
+    background-color:rgba(80, 78, 78, 0.151);
+}
+
+svg {
+    overflow: hidden;
+    vertical-align: middle;
+    color: black;
+}
+.css-14el2xx-placeholder {
+    /* color: hsl(255, 50%, 98%); */
+    /* background-color: hsla(0, 1%, 55%, 0.233); */
+    grid-area: 1/1/2/3;
+    margin-left: 2px;
+    margin-right: 2px;
+    box-sizing: border-box;
+}
+.css-1s2u09g-control {
+    text-decoration-color:#19191a;
+    color: white;
+    font-family: Arial;
+    font-size: 18px;
+    /* background-color: hsla(0, 1%, 55%, 0.233); */
+    border-color: #5181b5;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    justify-content: space-between; 
+    min-height: 38px;
+    outline: 0!important;
+    position: relative;
+    /* -webkit-transition: all 100ms; */
+    transition: all 100ms;
+    box-sizing: border-box;
+    text-decoration-color: rgb(17, 17, 17);
 }
 
 table.blueTable {
@@ -64,10 +147,13 @@ table.blueTable {
     /* half of height */
 }
 
-table.blueTable th {
+table.blueTable thead th {
     border: 1px solid #6b6b6b;
     padding: 10px 10px;
     text-align: center;
+    color: white;
+    font-family: Arial;
+    font-size: 18px;
 }
 
 table.blueTable tbody td {
@@ -88,6 +174,7 @@ table.blueTable tr:nth-child(even) {
 
 table.blueTable tr:hover {
     background: #2c2c2c;
+    
 }
 
 table.blueTable thead {
@@ -95,14 +182,8 @@ table.blueTable thead {
     border-bottom: 1px solid#6b6b6b;;
 }
 
-table.blueTable thead th {
-    font-size: 18px;
-    color: #dddada;
-    border-left: 1px solid #6b6b6b;
-}
-
 table.blueTable thead th:first-child {
-    border-left: none;
+    border: 1px solid #6b6b6b;
 }
 
 table.blueTable tfoot td {
@@ -163,7 +244,8 @@ table.blueTable tfoot .links a {
 }
 
 .myButton1:hover {
-    background-color: #3d3f3f;
+    background-color: #e5e9e9;
+    color: #050505;
 }
 
 .myButton1:active {
@@ -184,11 +266,13 @@ table.blueTable tfoot .links a {
     color: #f0f0f0;
     font-family: Arial;
     font-size: 16px;
-    width: 100px;
-    padding: 2px 5px;
+    text-align: center;
+    width: 180px;
+    padding: 2px 10px;
+    margin-top:10px;
     margin-left: 975px;
-    margin-right:0;
-    text-decoration: none;
+    margin-right: 120px;
+    text-decoration: beige;
 }
 
 .myButton2:hover {
@@ -208,23 +292,24 @@ table.blueTable tfoot .links a {
 }
 
 .myDwnBtn {
-    background-color: #45c3c7;
-    border-radius: 19px;
+    background-color: rgb(49, 133, 230);
+    margin-top:30px;
     border: none;
     display: inline-block;
     cursor: pointer;
     color: #ffffff;
-    font-family: calibri;
-    font-size: 25px;
-    padding: 15px 50px;
-    margin-left: 300px;
-    text-decoration: none;
+    font-family: arial;
+    font-size: 16px;
+    padding: 8px 65px;
+    margin-left: 1125px;
+    text-decoration: beige;
     
 
 }
 
 .myDwnBtn:hover {
-    background-color: #2ab3bd;
+    background-color: #e5e9e9;
+    color: #050505;
 }
 
 .myDwnBtn:active {
@@ -233,7 +318,7 @@ table.blueTable tfoot .links a {
 }
 
 .myDwnBtn:disabled {
-    background-color: rgb(153, 151, 151);
+    background-color: #636868;
 }
 
 img {
@@ -289,12 +374,10 @@ img {
 
 .files:before {
     position: absolute;
-    /* bottom: 10px; */
-    top: 150px;
-    left: 0;
+    top: 275px;
+    left: 255px;
     pointer-events: none;
     width: 275%;
-    /* right: 0; */
     height: 57px;
     content: " or drag it here. ";
     display: block;

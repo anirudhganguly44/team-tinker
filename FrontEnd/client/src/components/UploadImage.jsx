@@ -19,7 +19,7 @@ checkMimeType=(event)=> {
     //define message container
     let err = []
     // list allow mime type
-    const types = ['image/png', 'image/jpeg', 'image/gif', 'application/zip']
+    const types = ['image/png', 'image/jpeg', 'image/gif', 'application/zip', 'text/x-matlab']
     // loop access array
     for(var x = 0; x<files.length; x++) {
         // compare file type find doesn't matach
@@ -37,8 +37,8 @@ checkMimeType=(event)=> {
 }
 maxSelectFile=(event)=>{
     let files = event.target.files
-        if (files.length > 4) { 
-           const msg = 'Only 4 images can be uploaded at a time'
+        if (files.length > 100) { 
+           const msg = 'Only 100 images can be uploaded at a time'
            event.target.value = null
            toast.warn(msg)
            return false;
@@ -99,7 +99,7 @@ return (
         <div class="offset-md-2 col-md-8">
             <div class="form-group files">
             <br/><br/><br/>
-            <h4>Upload Your File </h4>
+            <label>Upload Your File </label>
             <input type="file" class="form-control" multiple onChange={this.onChangeHandler}/>
             </div>  
 
@@ -109,7 +109,7 @@ return (
             </div>             
             <button type="button" class="btn btn-success btn-block" onClick={this.onClickHandler}>Upload</button>
             <br/>
-            <a type="button" class="btn btn-outline-secondary" href="./displaydatasets">View the Datasets</a>
+            <a type="button" class="btn btn-outline-secondary" href="./">View the Datasets</a>
         </div>
     </div>
     </div>
