@@ -245,6 +245,16 @@ class DisplayImages extends React.Component {
                 <div>
                   <Select options={trueLabelsList} 
                   placeholder={'UPDATE'}
+                  theme={(theme) => ({
+                    ...theme,
+                    borderRadius: 0,
+                    colors: {
+                    ...theme.colors,
+                      text: 'orangered',
+                      primary25: 'hotpink',
+                      primary: 'black',
+                    },
+                  })}
                   onChange={(e) => this.renameSubmit(file.src, e.value)} /><br />
                   <input type="button" class="myButton1" value="Delete" id={file.src} onClick={(e) => this.deleteImage(file.src)} />
                 </div>
