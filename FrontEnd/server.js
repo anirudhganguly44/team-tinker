@@ -405,19 +405,22 @@ app.post('/upload', function (req, res) {
                 }
                 n = n + 1;
             }
-            // unzip file.path to targetDir
             var zip = fs.createReadStream(file.path);
             zip.on('error', err => console.log("Error unzipping file: ", err));
             zip.on('close', () => {
                 // delete the zip file
                 console.log("unzip done.");
                 fs.rmSync(file.path, { force: true });
-                res.status(200).send(req.files);
+                console.log("File is deleted.", file.path);
+                console.log("File path.", targetDir);
+                newDir = `${targetDir}//data.unclean`;
+                fs.closeSync(fs.openSync(newDir, 'w',));
+                    console.log("File is created.", newDir);
+                // return res.status(200).send(req.files);
             });
             zip.pipe(unzip.Extract({ path: targetDir }));
         })
-
-        //return res.status(200).send(req.file)
+        res.end();
         // Everything went fine.
     })
 });
