@@ -69,7 +69,12 @@ class GetDataSets extends React.Component {
     // console.log('Current directory: ' + process.cwd());
     return (
 
+
       <div className="wrapper">
+        <div class="button_group">
+        <a  type="button" class="myButton4" href="./uploadimage">Upload</a> 
+        <a type="button" class="myButton4" href="./create">Create</a>
+        </div>
         <table className="table blueTable">
           <thead>
             <tr>
@@ -114,10 +119,6 @@ class GetDataSets extends React.Component {
             }
           </tbody>
         </table>
-        <td width="auto">
-          <a type="button" class="myButton2" href="./uploadimage">Upload</a> 
-          <a type="button" class="myButton2" href="./create">Create</a>
-        </td>
       </div>
     );
   }

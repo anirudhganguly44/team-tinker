@@ -32,13 +32,13 @@ CUSTOM = {
     "path": "/datasets/CIFAR-10", # data path
     "shape": [32, 32, 3], # height, width, depth
     "resize": None,
-    "num_train": 1050,
-    "num_validation": 1050,
-    "num_test": 1050,
+    "num_train": 1041,
+    "num_validation": 1041,
+    "num_test": 1041,
     "train_files": ["train_batch_1.bin", "train_batch_2.bin", "train_batch_3.bin", "train_batch_4.bin", "train_batch_5.bin"],
     "validation_files": ["validation_batch.bin"],
     "test_files": ["test_batch.bin"],
-    "num_labels": 5
+    "num_labels": 2
 }
 
 SCAN = {

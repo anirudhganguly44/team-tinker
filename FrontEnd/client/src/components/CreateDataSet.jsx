@@ -149,7 +149,7 @@ canShowImage(file) {
 
           <div class="box"> Filter By Label</div>
           <div class="box">
-            <select id="label_filter" onChange={this.checkSelectFilter}>
+            <select class="select_style" id="label_filter" onChange={this.checkSelectFilter}>
               <option value="default" selected>All</option>
               {trueLabelsList.map((truelabeloption) => (
                 <option value={truelabeloption.value}>{truelabeloption.label}</option>

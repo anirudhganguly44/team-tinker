@@ -142,6 +142,12 @@ class DisplayImages extends React.Component {
 
   }
 
+  renameSubmitNew  = (fileSrc, newLabel) => {
+    console.log(fileSrc);
+    console.log(newLabel.value);
+    this.renameSubmit(fileSrc, newLabel)
+  }
+
   renameSubmit(fileSrc, newLabel) {
     // document.getElementById("renamebtn").disabled = true;
     // this.state.nameSelected = false;
@@ -191,6 +197,7 @@ class DisplayImages extends React.Component {
       })
 
   }
+  
 
   render() {
     const imageList = this.state.data;
@@ -215,7 +222,7 @@ class DisplayImages extends React.Component {
           </div>
           <div class="box"> Filter By Label</div>
           <div class="box">
-            <select id="label_filter" onChange={this.checkSelectFilter}>
+            <select class="select_style" id="label_filter" onChange={this.checkSelectFilter}>
               <option value="default" selected>All</option>
               {trueLabelsList.map((truelabeloption) => (
                 <option value={truelabeloption.value}>{truelabeloption.label}</option>
@@ -223,8 +230,8 @@ class DisplayImages extends React.Component {
             </select>
           </div>
         </div>
-        <div>
-            <input type="button" class="myDwnBtn" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
+        <div class="button_group">
+            <input type="button" class="myButton4" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
         </div>
         <br/>
         <div className="home">
@@ -242,20 +249,18 @@ class DisplayImages extends React.Component {
                   <rect width="100%" height="1" />
                 </svg>
                 <br />
-                <div>
-                  <Select options={trueLabelsList} 
+                <div class="select">
+                  {/* <Select options={trueLabelsList} 
                   placeholder={'UPDATE'}
-                  theme={(theme) => ({
-                    ...theme,
-                    borderRadius: 0,
-                    colors: {
-                    ...theme.colors,
-                      text: 'orangered',
-                      primary25: 'hotpink',
-                      primary: 'black',
-                    },
-                  })}
-                  onChange={(e) => this.renameSubmit(file.src, e.value)} /><br />
+                  onChange={(e) => this.renameSubmit(file.src, e.value)} /><br /> */}
+                  <select class="select_style" onChange={(e) => this.renameSubmitNew(file.src, e.target.value)}>
+                      <option value="none" selected disabled hidden>
+                      Edit Label
+                      </option>
+                      {trueLabelsList.map((truelabeloption) => (
+                      <option value={truelabeloption.value}>{truelabeloption.label}</option>
+                  ))}
+            </select>
                   <input type="button" class="myButton1" value="Delete" id={file.src} onClick={(e) => this.deleteImage(file.src)} />
                 </div>
               </div>

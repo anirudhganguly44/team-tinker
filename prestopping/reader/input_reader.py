@@ -186,6 +186,7 @@ class InputReader(object):
         path = custom_dir
         label_folders = [ name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) ]
         num_labels = len(label_folders)
+        self.meta["num_labels"] = num_labels
         loaded_data = []
 
         self.label_name_map = {}
