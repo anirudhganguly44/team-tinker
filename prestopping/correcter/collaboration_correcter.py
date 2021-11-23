@@ -150,6 +150,8 @@ class Correcter(object):
         f.close()
         if os.path.exists(root_path + "\\data.unclean"):
             os.remove(root_path + "\\data.unclean")
+        if os.path.exists(root_path + "\\data.inprogress"):
+            os.remove(root_path + "\\data.inprogress")
             
 
     # def save_images_orig(self, path):

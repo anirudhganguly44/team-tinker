@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import Select from 'react-select';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ReactLoading from "react-loading";
+
 
 class DisplayImages extends React.Component {
+
   constructor() {
     super();
+
+
+
     this.state = {
       data: [],
       filter: false,
@@ -15,20 +21,24 @@ class DisplayImages extends React.Component {
       TotalImages: 0,
       TotalLabels: 0,
       TotalCorrections: 0,
-      loaded: 0
+      loaded: 0,
+      setDone: false
     };
   }
 
   componentDidMount() {
 
-    let params = queryString.parse(this.props.location.search)
-    fetch("/getimages?dir=./client/public/selfie-output/" + params.name)
-      .then((res) => res.json())
-      .then((json) => {
-        var label_count = this.getTrueLabels(json.express).length
-        this.setState({ data: json.express, TotalLabels: label_count, TotalImages: json.express.length, TotalCorrections: this.getCorrectedImageCount(json.express) });
+    let params = queryString.parse(this.props.location.search);
 
-      });
+      setTimeout(() => {
+        fetch("/getimages?dir=./client/public/selfie-output/" + params.name)
+          .then((res) => res.json())
+          .then((json) => {
+            var label_count = this.getTrueLabels(json.express).length
+            this.setState({ setDone: true, data: json.express, TotalLabels: label_count, TotalImages: json.express.length, TotalCorrections: this.getCorrectedImageCount(json.express) });
+          });
+
+      }, 2000);
   }
 
   getCorrectedImageCount(datas) {
@@ -142,15 +152,13 @@ class DisplayImages extends React.Component {
 
   }
 
-  renameSubmitNew  = (fileSrc, newLabel) => {
+  renameSubmitNew = (fileSrc, newLabel) => {
     console.log(fileSrc);
     console.log(newLabel.value);
     this.renameSubmit(fileSrc, newLabel)
   }
 
   renameSubmit(fileSrc, newLabel) {
-    // document.getElementById("renamebtn").disabled = true;
-    // this.state.nameSelected = false;
     console.log("In rename Submit group.");
 
     const headers = {
@@ -183,6 +191,8 @@ class DisplayImages extends React.Component {
 
   deleteImage(fileSrc) {
     console.log("In image delete section.");
+
+
     fetch("/deletefile?file=./client/public/" + fileSrc,
       {
         method: "DELETE"
@@ -197,80 +207,96 @@ class DisplayImages extends React.Component {
       })
 
   }
-  
+
 
   render() {
     const imageList = this.state.data;
     console.log(imageList);
     const trueLabelsList = this.getTrueLabels(imageList);
-    // console.log("After get true labels: " + trueLabelsList);
+    const done = this.state.setDone;
 
     return (
-      <div>
-        <ToastContainer />
-        <div className="stats">
-          <label>Total Image Count: {this.state.TotalImages}</label><br />
-          <label>Total Label Count: {this.state.TotalLabels}</label><br />
-          <label>Total Corrected Image Count: {this.state.TotalCorrections}</label>
-        </div>
-        <div class="wrapper">
-          <div class="box">
-            <label>
-              <input type="checkbox" defaultChecked={this.state.filter} onChange={this.checkFilter} id="filter" />
-                Filter Only Corrected Images
-            </label>
-          </div>
-          <div class="box"> Filter By Label</div>
-          <div class="box">
-            <select class="select_style" id="label_filter" onChange={this.checkSelectFilter}>
-              <option value="default" selected>All</option>
-              {trueLabelsList.map((truelabeloption) => (
-                <option value={truelabeloption.value}>{truelabeloption.label}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div class="button_group">
-            <input type="button" class="myButton4" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
-        </div>
-        <br/>
-        <div className="home">
-          <div class="parent">
-            {imageList.map((file) => (
-              this.canShowImage(file) &&
-              <div class="child">
-                <img src={file.src} alt="" />
-                <br />
-                Original Label = {file.label}
-                <br />
-                Corrected Label = {file.trueLabel}
-                <br />
-                <svg width="100%" height="1">
-                  <rect width="100%" height="1" />
-                </svg>
-                <br />
-                <div class="select">
-                  {/* <Select options={trueLabelsList} 
+
+      <>
+        {!done ? (
+          <ReactLoading
+            type={"bars"}
+            color={"#03fc4e"}
+            height={100}
+            width={100}
+          />
+        ) : (
+
+          <div>
+            <ToastContainer />
+
+
+
+            <div className="stats">
+              <label>Total Image Count: {this.state.TotalImages}</label><br />
+              <label>Total Label Count: {this.state.TotalLabels}</label><br />
+              <label>Total Corrected Image Count: {this.state.TotalCorrections}</label>
+            </div>
+            <div class="wrapper">
+              <div class="box">
+                <label>
+                  <input type="checkbox" defaultChecked={this.state.filter} onChange={this.checkFilter} id="filter" />
+                  Filter Only Corrected Images
+                </label>
+              </div>
+              <div class="box"> Filter By Label</div>
+              <div class="box">
+                <select class="select_style" id="label_filter" onChange={this.checkSelectFilter}>
+                  <option value="default" selected>All</option>
+                  {trueLabelsList.map((truelabeloption) => (
+                    <option value={truelabeloption.value}>{truelabeloption.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div class="button_group">
+              <input type="button" class="myButton4" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
+            </div>
+            <br />
+            <div className="home">
+              <div class="parent">
+                {imageList.map((file) => (
+                  this.canShowImage(file) &&
+                  <div class="child">
+                    <img src={file.src} alt="" />
+                    <br />
+                    Original Label = {file.label}
+                    <br />
+                    Corrected Label = {file.trueLabel}
+                    <br />
+                    <svg width="100%" height="1">
+                      <rect width="100%" height="1" />
+                    </svg>
+                    <br />
+                    <div class="select">
+                      {/* <Select options={trueLabelsList} 
                   placeholder={'UPDATE'}
                   onChange={(e) => this.renameSubmit(file.src, e.value)} /><br /> */}
-                  <select class="select_style" onChange={(e) => this.renameSubmitNew(file.src, e.target.value)}>
-                      <option value="none" selected disabled hidden>
-                      Edit Label
-                      </option>
-                      {trueLabelsList.map((truelabeloption) => (
-                      <option value={truelabeloption.value}>{truelabeloption.label}</option>
-                  ))}
-            </select>
-                  <input type="button" class="myButton1" value="Delete" id={file.src} onClick={(e) => this.deleteImage(file.src)} />
-                </div>
-              </div>
-            ))}
+                      <select class="select_style" onChange={(e) => this.renameSubmitNew(file.src, e.target.value)}>
+                        <option value="none" selected disabled hidden>
+                          Edit Label
+                        </option>
+                        {trueLabelsList.map((truelabeloption) => (
+                          <option value={truelabeloption.value}>{truelabeloption.label}</option>
+                        ))}
+                      </select>
+                      <input type="button" class="myButton1" value="Delete" id={file.src} onClick={(e) => this.deleteImage(file.src)} />
+                    </div>
+                  </div>
+                ))}
 
+              </div>
+              <p><br /><br /><br /></p>
+
+            </div>
           </div>
-          <p><br /><br /><br /></p>
-          
-        </div>
-      </div>
+        )}
+      </>
     );
 
 

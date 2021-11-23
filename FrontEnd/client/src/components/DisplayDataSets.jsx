@@ -1,6 +1,8 @@
 import React from "react";
 // import { Link } from 'react-router-dom';
 // import { DownloadUtil } from '../utils/downloadutil';
+import ReactLoading from "react-loading";
+
 
 class GetDataSets extends React.Component {
 
@@ -65,15 +67,15 @@ class GetDataSets extends React.Component {
 
   render() {
     const datasetList = this.state.data;
-    // console.log(datasetList);
+    console.log(datasetList);
     // console.log('Current directory: ' + process.cwd());
     return (
 
 
       <div className="wrapper">
         <div class="button_group">
-        <a  type="button" class="myButton4" href="./uploadimage">Upload</a> 
-        <a type="button" class="myButton4" href="./create">Create</a>
+          <a type="button" class="myButton4" href="./uploadimage">Upload</a>
+          <a type="button" class="myButton4" href="./create">Create</a>
         </div>
         <table className="table blueTable">
           <thead>
@@ -88,15 +90,9 @@ class GetDataSets extends React.Component {
               datasetList.map((dataset) => (
                 <tr>
                   <td>
-                      {/* <Link
-                        to={{
-                          pathname: '/displayimages?name=' + dataset.name
-                        }}
-                      >{dataset.name}
-                      </Link> */}
-                      <div style={{ 'text-transform': 'uppercase' }}>
+                    <div style={{ 'text-transform': 'uppercase' }}>
                       <a className="hyperlink" href={"/displayimages?name=" + dataset.name}> <div>{dataset.name}</div> </a>
-                      </div>
+                    </div>
                   </td>
                   <td style={{ 'text-transform': 'uppercase' }}>{dataset.status}
                   </td>
@@ -112,6 +108,14 @@ class GetDataSets extends React.Component {
                     }
                     {dataset.status === "unclean" &&
                       <input type="button" class="myButton1" onClick={() => this.OnClean(dataset.name)} value="Clean" />
+                    }
+                    {dataset.status === "inprogress" &&
+                      <ReactLoading
+                        type={"bars"}
+                        color={"#03fc4e"}
+                        height={25}
+                        width={25}
+                      />
                     }
                   </td>
                 </tr>

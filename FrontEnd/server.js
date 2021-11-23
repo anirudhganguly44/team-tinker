@@ -125,6 +125,9 @@ app.get("/getdatasets", (req, res) => {
                     if (sb.includes("data.clean")) {
                         ds_status = "clean";
                     }
+                    else if(sb.includes("inprogress")){
+                        ds_status = "inprogress";
+                    }
                 }
             })
             dict["path"] = dirPath + "/" + file;
@@ -139,7 +142,29 @@ app.get("/getdatasets", (req, res) => {
 
 app.put("/train", (req, res) => {
 
-    let folderToTrain = "C:\\sjsu\\project\\team-tinker\\FrontEnd\\client\\public\\selfie-output\\" + req.body.Dataset;
+    let folderToTrain = ".\\client\\public\\selfie-output\\" + req.body.Dataset; //Changed the path to relative to accomodate the file name change.
+
+    //making the data.unclean file to data.inprogress to show on website that the training is in progress.
+    const oldName = folderToTrain + "\\data.unclean";
+    const newName = folderToTrain + "\\data.inprogress";
+    const fs = require('fs');
+    try {
+        if (fs.existsSync(oldName)) {
+            // console.log("File exists!");
+            fs.rename(oldName, newName, (error) => {
+                if (error) {
+                    console.log("Error during rename: " + error);
+                } else {
+                    console.log("File renamed to in progress");
+                }
+            });
+        }
+        else {
+            console.log("File does not exists.\n"+oldName);
+        }
+    } catch (err) {
+        console.log(err);
+    }
 
     const pythonScript = `C:\\sjsu\\project\\team-tinker\\prestopping\\main.py 0 custom DenseNet-25-12 PrestoppingPlus Symmetric 0.05 c:\\SELFIE ${folderToTrain}`;
     const environmentName = 'selfie';
@@ -338,13 +363,17 @@ app.delete("/deletedataset", (req, res) => {
     const fs = require("fs")
     fs.rmdir(dir, { recursive: true }, (err) => {
         if (err) {
-            throw err;
+            console.log("Failed to delete the file.");
+            console.log(err);
+            // throw err;
         }
 
         console.log(`${dir} is deleted!`);
+        
     });
-
     res.status(204).send(req.body);
+
+    
 });
 
 
