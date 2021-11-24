@@ -2,17 +2,8 @@
     text-align: left;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: rgb(39, 39, 39);
+    color: white;
 }
-
-
-/* .App-header {
-  background-color: #282c34;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-} */
 
 
 /* this is used for image display tiles */
@@ -478,17 +469,22 @@ img {
 }
 
 
-            .box{float:left; height:20px; background-color: rgb(39, 39, 39); color: #dddada;}
-            .box:nth-child(1){
-               width:300px;
-               background-color: rgb(39, 39, 39);
-        
-            }
-            .box:nth-child(2){
-               width:100px;
-               background-color: rgb(39, 39, 39);
-            }
-            .box:nth-child(3){
-               width:80px;
-               background-color: rgb(39, 39, 39);
-            }
+.box{float:left; height:20px; background-color: rgb(39, 39, 39); color: #dddada;}
+.box:nth-child(1){
+    width:300px;
+    background-color: rgb(39, 39, 39);
+
+}
+.box:nth-child(2){
+    width:100px;
+    background-color: rgb(39, 39, 39);
+}
+.box:nth-child(3){
+    width:80px;
+    background-color: rgb(39, 39, 39);
+}
+
+.loadercenter{
+    margin: 0 auto;
+    align-self: center;
+}

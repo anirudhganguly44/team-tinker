@@ -125,7 +125,7 @@ app.get("/getdatasets", (req, res) => {
                     if (sb.includes("data.clean")) {
                         ds_status = "clean";
                     }
-                    else if(sb.includes("inprogress")){
+                    else if (sb.includes("inprogress")) {
                         ds_status = "inprogress";
                     }
                 }
@@ -160,7 +160,7 @@ app.put("/train", (req, res) => {
             });
         }
         else {
-            console.log("File does not exists.\n"+oldName);
+            console.log("File does not exists.\n" + oldName);
         }
     } catch (err) {
         console.log(err);
@@ -301,6 +301,12 @@ app.post("/imagerename", (req, res) => {
                 }
             });
         }
+        else {
+            console.log("File not found!");
+            result["status"] = "failure";
+            result["error"] = "File not found!"
+            res.send({ express: result });
+        }
     } catch (err) {
         console.log(err);
         result["status"] = "failure";
@@ -369,11 +375,11 @@ app.delete("/deletedataset", (req, res) => {
         }
 
         console.log(`${dir} is deleted!`);
-        
+
     });
     res.status(204).send(req.body);
 
-    
+
 });
 
 
@@ -444,7 +450,7 @@ app.post('/upload', function (req, res) {
                 console.log("File path.", targetDir);
                 newDir = `${targetDir}//data.unclean`;
                 fs.closeSync(fs.openSync(newDir, 'w',));
-                    console.log("File is created.", newDir);
+                console.log("File is created.", newDir);
                 // return res.status(200).send(req.files);
             });
             zip.pipe(unzip.Extract({ path: targetDir }));

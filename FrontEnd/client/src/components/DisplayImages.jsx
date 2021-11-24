@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import Select from 'react-select';
@@ -11,9 +11,6 @@ class DisplayImages extends React.Component {
 
   constructor() {
     super();
-
-
-
     this.state = {
       data: [],
       filter: false,
@@ -22,23 +19,23 @@ class DisplayImages extends React.Component {
       TotalLabels: 0,
       TotalCorrections: 0,
       loaded: 0,
-      setDone: false
+      setDone: false,
+      setDownloadDone: true
     };
   }
 
   componentDidMount() {
-
     let params = queryString.parse(this.props.location.search);
 
-      setTimeout(() => {
-        fetch("/getimages?dir=./client/public/selfie-output/" + params.name)
-          .then((res) => res.json())
-          .then((json) => {
-            var label_count = this.getTrueLabels(json.express).length
-            this.setState({ setDone: true, data: json.express, TotalLabels: label_count, TotalImages: json.express.length, TotalCorrections: this.getCorrectedImageCount(json.express) });
-          });
+    setTimeout(() => {
+      fetch("/getimages?dir=./client/public/selfie-output/" + params.name)
+        .then((res) => res.json())
+        .then((json) => {
+          var label_count = this.getTrueLabels(json.express).length
+          this.setState({ setDone: true, data: json.express, TotalLabels: label_count, TotalImages: json.express.length, TotalCorrections: this.getCorrectedImageCount(json.express) });
+        });
 
-      }, 2000);
+    }, 2000);
   }
 
   getCorrectedImageCount(datas) {
@@ -119,36 +116,39 @@ class DisplayImages extends React.Component {
     console.log("downloadPath: " + dirPath);
     var dirName = dirPath.split(/(.*)[\/\\]/)[2];
     console.log("downloadName: " + dirName);
-
+    this.setState({ setDownloadDone: false });
     var directoryName = dirName + ".zip";
-    fetch('/download?dir=' + dirPath, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/octet-stream',
-      },
-    })
-      .then((response) => response.blob())
-      .then((blob) => {
-        // Create blob link to download
-        const url = window.URL.createObjectURL(
-          new Blob([blob]),
-        );
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute(
-          'download',
-          directoryName,
-        );
+    setTimeout(() => {
+      fetch('/download?dir=' + dirPath, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+      })
+        .then((response) => response.blob())
+        .then((blob) => {
+          // Create blob link to download
+          const url = window.URL.createObjectURL(
+            new Blob([blob]),
+          );
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute(
+            'download',
+            directoryName,
+          );
+          this.setState({ setDownloadDone: true });
 
-        // Append to html link element page
-        document.body.appendChild(link);
+          // Append to html link element page
+          document.body.appendChild(link);
 
-        // Start download
-        link.click();
+          // Start download
+          link.click();
 
-        // Clean up and remove the link
-        link.parentNode.removeChild(link);
-      });
+          // Clean up and remove the link
+          link.parentNode.removeChild(link);
+        });
+    }, 2000);
 
   }
 
@@ -171,41 +171,56 @@ class DisplayImages extends React.Component {
       "newtruelabel": newLabel
     };
 
-    fetch("/imagerename",
-      {
-        headers: headers,
-        method: "POST",
-        body: JSON.stringify(requestBody)
+    setTimeout(() => {
+      fetch("/imagerename",
+        {
+          headers: headers,
+          method: "POST",
+          body: JSON.stringify(requestBody)
 
-      }
-    )
-      .then((res) => res.json())
-      .then((json) => { // then print response status
-        toast.success('rename success')
-        window.location.reload(false);
-      })
-      .catch((err) => { // then print response status
-        toast.error('rename fail. ' + err)
-      })
+        }
+      )
+        .then((res) => res.json())
+        .then((json) => { // then print response status
+          // toast.success('rename success');
+          // console.log("Status: "+json.express.status);
+          if(json.express.status=="success"){
+            window.location.reload(false);
+          }
+          else{
+            toast.error('rename fail. ' + json.express.error)
+          }
+        })
+        .catch((err) => { // then print response status
+          toast.error('rename fail. ' + err)
+        })
+    }, 2000);
   }
 
   deleteImage(fileSrc) {
     console.log("In image delete section.");
 
-
-    fetch("/deletefile?file=./client/public/" + fileSrc,
-      {
-        method: "DELETE"
-      }
-    )
-      .then(res => { // then print response status
-        toast.success('Operation complete!')
-        window.location.reload(false);
+    setTimeout(() => {
+      fetch("/deletefile?file=./client/public/" + fileSrc,
+        {
+          method: "DELETE"
+        }
+      )
+      .then((res) => res.json())
+      .then((json) => { // then print response status
+        // toast.success('rename success');
+        // console.log("Status: "+json.express.status);
+        if(json.express.status=="success"){
+          window.location.reload(false);
+        }
+        else{
+          toast.error('rename fail. ' + json.express.error)
+        }
       })
-      .catch(err => { // then print response status
-        toast.error('Operation failed!')
+      .catch((err) => { // then print response status
+        toast.error('rename fail. ' + err)
       })
-
+    }, 2000);
   }
 
 
@@ -214,12 +229,12 @@ class DisplayImages extends React.Component {
     console.log(imageList);
     const trueLabelsList = this.getTrueLabels(imageList);
     const done = this.state.setDone;
+    const downloadNotClicked = this.state.setDownloadDone;
 
     return (
-
       <>
         {!done ? (
-          <ReactLoading
+          <ReactLoading className="loadercenter"
             type={"bars"}
             color={"#03fc4e"}
             height={100}
@@ -229,9 +244,6 @@ class DisplayImages extends React.Component {
 
           <div>
             <ToastContainer />
-
-
-
             <div className="stats">
               <label>Total Image Count: {this.state.TotalImages}</label><br />
               <label>Total Label Count: {this.state.TotalLabels}</label><br />
@@ -254,10 +266,19 @@ class DisplayImages extends React.Component {
                 </select>
               </div>
             </div>
+
             <div class="button_group">
-              <input type="button" class="myButton4" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
+              {!downloadNotClicked ? (
+                <ReactLoading className="loadercenter"
+                  type={"bars"}
+                  color={"#03fc4e"}
+                  height={50}
+                  width={50}
+                />
+              ) : (<input type="button" class="myButton4" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
+              )}
             </div>
-            <br />
+            < br />
             <div className="home">
               <div class="parent">
                 {imageList.map((file) => (
