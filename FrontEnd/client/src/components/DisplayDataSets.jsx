@@ -122,12 +122,12 @@ class GetDataSets extends React.Component {
                   <tr>
                     <td>
                       <div style={{ 'text-transform': 'uppercase' }}>
-                        {dataset.status === "clean" &&
+                        {/* {dataset.status === "clean" && */}
                           <a className="hyperlink" href={"/displayimages?name=" + dataset.name}> <div>{dataset.name}</div> </a>
-                        }
+                        {/* }
                         {dataset.status !== "clean" &&
                           <a> <div>{dataset.name}</div> </a>
-                        }
+                        } */}
 
                       </div>
                     </td>
