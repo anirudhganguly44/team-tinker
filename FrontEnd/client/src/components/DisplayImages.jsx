@@ -31,7 +31,7 @@ class DisplayImages extends React.Component {
       fetch("/getimages?dir=./client/public/selfie-output/" + params.name)
         .then((res) => res.json())
         .then((json) => {
-          var label_count = this.getTrueLabels(json.express).length
+          var label_count = this.getLabels(json.express).length
           this.setState({ setDone: true, data: json.express, TotalLabels: label_count, TotalImages: json.express.length, TotalCorrections: this.getCorrectedImageCount(json.express) });
         });
 
@@ -41,7 +41,7 @@ class DisplayImages extends React.Component {
   getCorrectedImageCount(datas) {
     var count = 0;
     datas.forEach(data => {
-      if (data.label !== data.trueLabel)
+      if (data.trueLabel != "" && data.label !== data.trueLabel)
         count = count + 1;
     });
 
@@ -71,7 +71,6 @@ class DisplayImages extends React.Component {
         trueLabels.push(tlabel);
       }
     });
-    console.log("True labels: " + trueLabels);
 
     trueLabels.forEach(label => {
       const dict = {};
@@ -79,9 +78,29 @@ class DisplayImages extends React.Component {
       dict["label"] = label;
       results.push(dict);
     });
-
+    console.log("True labels: " + results);
     return results;
+  }
 
+  getLabels(dataset) {
+    console.log("In finding labels!");
+    var labels = [];
+    var results = [];
+    dataset.forEach(imageSet => {
+      const label = imageSet.label;
+      if (!(labels.includes(label))) {
+        labels.push(label);
+      }
+    });
+    console.log("Labels: " + labels);
+    return labels;
+    // labels.forEach(label => {
+    //   const dict = {};
+    //   dict["value"] = label;
+    //   dict["label"] = label;
+    //   results.push(dict);
+    // });
+    // return results;
   }
 
   canShowImage(file) {
@@ -106,7 +125,6 @@ class DisplayImages extends React.Component {
 
   doDownload(imagePath) {
     console.log("Downloading dataset");
-
     console.log("original path folder: " + imagePath[0].src);
     var split1 = imagePath[0].src.split(/(.*)[\/\\]/)[1];
     // console.log("download path folder: "+split1);
@@ -138,7 +156,7 @@ class DisplayImages extends React.Component {
             directoryName,
           );
           this.setState({ setDownloadDone: true });
-
+          toast.success('Download success!');
           // Append to html link element page
           document.body.appendChild(link);
 
@@ -184,10 +202,10 @@ class DisplayImages extends React.Component {
         .then((json) => { // then print response status
           // toast.success('rename success');
           // console.log("Status: "+json.express.status);
-          if(json.express.status=="success"){
+          if (json.express.status == "success") {
             window.location.reload(false);
           }
-          else{
+          else {
             toast.error('rename fail. ' + json.express.error)
           }
         })
@@ -206,20 +224,20 @@ class DisplayImages extends React.Component {
           method: "DELETE"
         }
       )
-      .then((res) => res.json())
-      .then((json) => { // then print response status
-        // toast.success('rename success');
-        // console.log("Status: "+json.express.status);
-        if(json.express.status=="success"){
-          window.location.reload(false);
-        }
-        else{
-          toast.error('rename fail. ' + json.express.error)
-        }
-      })
-      .catch((err) => { // then print response status
-        toast.error('rename fail. ' + err)
-      })
+        .then((res) => res.json())
+        .then((json) => { // then print response status
+          // toast.success('rename success');
+          // console.log("Status: "+json.express.status);
+          if (json.express.status == "success") {
+            window.location.reload(false);
+          }
+          else {
+            toast.error('rename fail. ' + json.express.error)
+          }
+        })
+        .catch((err) => { // then print response status
+          toast.error('rename fail. ' + err)
+        })
     }, 2000);
   }
 
@@ -249,80 +267,91 @@ class DisplayImages extends React.Component {
               <label>Total Label Count: {this.state.TotalLabels}</label><br />
               <label>Total Corrected Image Count: {this.state.TotalCorrections}</label>
             </div>
-            <div class="wrapper">
-              <div class="box">
-                <label>
-                  <input type="checkbox" defaultChecked={this.state.filter} onChange={this.checkFilter} id="filter" />
-                  Filter Only Corrected Images
-                </label>
+            {this.state.TotalCorrections > 0 &&
+              <div class="wrapper">
+                <div class="box">
+                  <label>
+                    <input type="checkbox" defaultChecked={this.state.filter} onChange={this.checkFilter} id="filter" />
+                    Filter Only Corrected Images
+                  </label>
+                </div>
+                <div class="box"> Filter By Label</div>
+                <div class="box">
+                  <select class="select_style" id="label_filter" onChange={this.checkSelectFilter}>
+                    <option value="default" selected>All</option>
+                    {trueLabelsList.map((truelabeloption) => (
+                      <option value={truelabeloption.value}>{truelabeloption.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div class="box"> Filter By Label</div>
-              <div class="box">
-                <select class="select_style" id="label_filter" onChange={this.checkSelectFilter}>
-                  <option value="default" selected>All</option>
-                  {trueLabelsList.map((truelabeloption) => (
-                    <option value={truelabeloption.value}>{truelabeloption.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div class="button_group">
-              {!downloadNotClicked ? (
+            }
+           
+              {
+              !downloadNotClicked ? (
                 <ReactLoading className="loadercenter"
                   type={"bars"}
                   color={"#03fc4e"}
                   height={50}
                   width={50}
                 />
-              ) : (<input type="button" class="myButton4" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
-              )}
-            </div>
-            < br />
-            <div className="home">
-              <div class="parent">
-                {imageList.map((file) => (
-                  this.canShowImage(file) &&
-                  <div class="child">
-                    <img src={file.src} alt="" />
-                    <br />
-                    Original Label = {file.label}
-                    <br />
-                    Corrected Label = {file.trueLabel}
-                    <br />
-                    <svg width="100%" height="1">
-                      <rect width="100%" height="1" />
-                    </svg>
-                    <br />
-                    <div class="select">
-                      {/* <Select options={trueLabelsList} 
-                  placeholder={'UPDATE'}
-                  onChange={(e) => this.renameSubmit(file.src, e.value)} /><br /> */}
-                      <select class="select_style" onChange={(e) => this.renameSubmitNew(file.src, e.target.value)}>
-                        <option value="none" selected disabled hidden>
-                          Edit Label
-                        </option>
-                        {trueLabelsList.map((truelabeloption) => (
-                          <option value={truelabeloption.value}>{truelabeloption.label}</option>
-                        ))}
-                      </select>
-                      <input type="button" class="myButton1" value="Delete" id={file.src} onClick={(e) => this.deleteImage(file.src)} />
-                    </div>
+              ) :
+                (this.state.TotalCorrections > 0 &&
+                  <div class="button_group">
+                    <input type="button" class="myButton4" value="Download Dataset" id="DownloadDataset" onClick={(e) => this.doDownload(imageList)} />
                   </div>
-                ))}
+                )}
+
+              < br />
+              <div className="home">
+                <div class="parent">
+                  {imageList.map((file) => (
+                    this.canShowImage(file) &&
+                    <div class="child">
+                      <img src={file.src} alt="" />
+                      <br />
+                      Original Label = {file.label}
+                      <br />
+                      {this.state.TotalCorrections > 0 &&
+                        <>
+                          Corrected Label = {file.trueLabel}
+                        </>
+                      }
+                      <br />
+                      <svg width="100%" height="1">
+                        <rect width="100%" height="1" />
+                      </svg>
+                      <br />
+                      <div class="select">
+                        {/* <Select options={trueLabelsList}
+                        placeholder={'UPDATE'}
+                        onChange={(e) => this.renameSubmit(file.src, e.value)} /><br /> */}
+                        {this.state.TotalCorrections > 0 &&
+                          <select class="select_style" onChange={(e) => this.renameSubmitNew(file.src, e.target.value)}>
+                            <option value="none" selected disabled hidden>
+                              Edit Label
+                            </option>
+                            {trueLabelsList.map((truelabeloption) => (
+                              <option value={truelabeloption.value}>{truelabeloption.label}</option>
+                            ))}
+                          </select>}
+                        <input type="button" class="myButton1" value="Delete" id={file.src} onClick={(e) => this.deleteImage(file.src)} />
+                      </div>
+                    </div>
+                  ))}
+
+                </div>
+                <p><br /><br /><br /></p>
 
               </div>
-              <p><br /><br /><br /></p>
-
             </div>
-          </div>
         )}
-      </>
-    );
+          </>
+        );
 
 
   }
 }
 
-//export default DisplayImages;
-export default withRouter(DisplayImages);
+        //export default DisplayImages;
+        export default withRouter(DisplayImages);
