@@ -48,11 +48,11 @@ app.get("/getimages", (req, res) => {
 
     console.log("Path choosen for getImages: " + img_dir);
 
-    const getAllFiles = function (dirPath, arrayOfFiles) {
+    const getAllFiles = function(dirPath, arrayOfFiles) {
         files = fs.readdirSync(dirPath);
         arrayOfFiles = arrayOfFiles || [];
 
-        files.forEach(function (file) {
+        files.forEach(function(file) {
             dict = {};
 
             if (fs.statSync(dirPath + "/" + file).isDirectory()) {
@@ -118,14 +118,13 @@ app.get("/getdatasets", (req, res) => {
             // var file_name = file;
             dict = {};
             ds_status = "unclean"
-            // if (file.includes("Dataset-")) {
+                // if (file.includes("Dataset-")) {
             subFile = fs.readdirSync(dirPath + "/" + file);
             subFile.forEach(sb => {
                 if (fs.statSync(dirPath + "/" + file + "/" + sb).isFile()) {
                     if (sb.includes("data.clean")) {
                         ds_status = "clean";
-                    }
-                    else if (sb.includes("inprogress")) {
+                    } else if (sb.includes("inprogress")) {
                         ds_status = "inprogress";
                     }
                 }
@@ -158,8 +157,7 @@ app.put("/train", (req, res) => {
                     console.log("File renamed to in progress");
                 }
             });
-        }
-        else {
+        } else {
             console.log("File does not exists.\n" + oldName);
         }
     } catch (err) {
@@ -170,10 +168,10 @@ app.put("/train", (req, res) => {
     const environmentName = 'selfie';
 
     const command = [
-        'echo \"%PATH%\"',
-        'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
-        `conda run -n ${environmentName} python ${pythonScript}`
-    ]
+            'echo \"%PATH%\"',
+            'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
+            `conda run -n ${environmentName} python ${pythonScript}`
+        ]
         .map(v => `(${v})`)
         .join(" && ");
 
@@ -275,7 +273,7 @@ app.post("/imagerename", (req, res) => {
     // newName = ".\\client\\public\\" + oldFile.split(/(.*)[\/\\]/)[1] + "\\" + newFileName;
 
     oldName = oldFile;
-    newName = oldFile.split(/(.*)[\/\\]/)[1] + "\\" + newFileName;
+    newName = oldFile.split(/(.*)[\/\\]/)[1] + "/" + newFileName;
 
     console.log("Oldfile: " + oldName);
     console.log("Newfile: " + newName);
@@ -289,19 +287,25 @@ app.post("/imagerename", (req, res) => {
                     result["status"] = "failure";
                     result["error"] = error;
                     res.send({ express: result });
-                }
-                else {
-                    console.log("File renamed!");
-                    result["status"] = "success";
-                    result["filesrc"] = req.body.fileSrc;
-                    result["oldfilename"] = oldFileName;
-                    result["newfilename"] = newFileName;
+                } else {
+                    if (fs.existsSync(newName)) {
+                        console.log("File renamed!");
+                        result["status"] = "success";
+                        result["filesrc"] = req.body.fileSrc;
+                        result["oldfilename"] = oldFileName;
+                        result["newfilename"] = newFileName;
 
-                    res.send({ express: result });
+                        res.send({ express: result });
+                    } else {
+                        console.log("Error during rename. New file not found!");
+                        result["status"] = "failure";
+                        result["error"] = "Error during rename. New file not found!"
+                        res.send({ express: result });
+
+                    }
                 }
             });
-        }
-        else {
+        } else {
             console.log("File not found!");
             result["status"] = "failure";
             result["error"] = "File not found!"
@@ -342,7 +346,7 @@ app.delete("/deletefile", (req, res) => {
     const fs = require("fs")
     result = {};
 
-    fs.unlink(filePath, function (err) {
+    fs.unlink(filePath, function(err) {
         if (err) {
             console.log("Failed to delete the file.");
             console.log(err);
@@ -390,35 +394,35 @@ var unzip = require('unzipper');
 var multer = require('multer')
 var cors = require('cors');
 app.use(cors())
-// var dataDir = 'client/public/selfie-output/data.unclean'
+    // var dataDir = 'client/public/selfie-output/data.unclean'
 var dataDir = 'client/public/selfie-output/'
 var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function(req, file, cb) {
         cb(null, dataDir);
     },
-    filename: function (req, file, cb) {
+    filename: function(req, file, cb) {
         cb(null, Date.now() + '-' + file.originalname)
     }
 });
 var upload = multer({ storage: storage }).array('file')
 
-app.get('/upload', function (req, res) {
+app.get('/upload', function(req, res) {
     return res.send('Hello Server')
 });
 
-app.post('/upload', function (req, res) {
+app.post('/upload', function(req, res) {
     //'/client/upload/selfie-output/uploadimages'
     console.log("Upload started.");
-    upload(req, res, function (err) {
+    upload(req, res, function(err) {
 
         if (err instanceof multer.MulterError) {
             console.log(err);
             return res.status(500).json(err)
-            // A Multer error occurred when uploading.
+                // A Multer error occurred when uploading.
         } else if (err) {
             console.log(err)
             return res.status(500).json(err)
-            // An unknown error occurred when uploading.
+                // An unknown error occurred when uploading.
         }
 
         console.log(`Uploaded ${req.files.length} files.`);
@@ -449,7 +453,7 @@ app.post('/upload', function (req, res) {
                 console.log("File is deleted.", file.path);
                 console.log("File path.", targetDir);
                 newDir = `${targetDir}//data.unclean`;
-                fs.closeSync(fs.openSync(newDir, 'w',));
+                fs.closeSync(fs.openSync(newDir, 'w', ));
                 console.log("File is created.", newDir);
                 // return res.status(200).send(req.files);
             });
@@ -470,16 +474,16 @@ app.put("/create", (req, res) => {
     const environmentName = 'tensorflow_gpuenv';
 
     const command = [
-        'echo \"%PATH%\"',
-        'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
-        `conda run -n ${environmentName} python ${pythonScript}`
-    ]
+            'echo \"%PATH%\"',
+            'set PATH=\"%PATH%\";C:\\Users\\anirudh\\Anaconda3;C:\\Users\\anirudh\\Anaconda3\\Library\\mingw-w64\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\usr\\bin;C:\\Users\\anirudh\\Anaconda3\\Library\\bin;C:\\Users\\anirudh\\Anaconda3\\Scripts;C:\\Users\\anirudh\\Anaconda3\\bin;C:\\Users\\anirudh\\Anaconda3\\condabin;',
+            `conda run -n ${environmentName} python ${pythonScript}`
+        ]
         .map(v => `(${v})`)
         .join(" && ");
 
     try {
         execSync(command, { shell: true });
-    } catch (err) { }
+    } catch (err) {}
 
     // pythonProcess.stdin.on('data', (data) => console.log(data.toString()));
     // pythonProcess.stderr.on('data', (data) => console.error(data.toString()));
